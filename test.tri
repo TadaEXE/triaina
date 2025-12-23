@@ -1,0 +1,24 @@
+fn hi:10() {
+  /* multiline
+  comment */
+  ret +;
+}
+/*
+gate right(2) { // the gate called right has takes two inputs
+    (?, +) => +;
+    (-, +) => +; // error because ? is greedy, so the line above already defined this case
+    (?, -) => -;
+    (?, 0) => 0;
+    (?, ?) => 0; // not an error, but unnecessary because all cases are already defined
+}
+fn cat:?(lhs:?l, rhs:?r) {
+  lhs = lhs[l:0]; // flip trits
+  res:? = 0;
+
+  // put flipped lhs in res and flip the whole thing
+  // -> lhs is now in front
+  tmp:?n = sepo(res, lhs);
+  res = tmp[n:0];
+  res = sepo(res, rhs);
+  ret res;
+}*/
