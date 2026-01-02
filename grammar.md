@@ -56,7 +56,7 @@ while_loop     := WHILE_KW cguard expr scope;
 for_loop       := FOR_KW word COMMA expr scope;
 
 var_decl       := VAR_KW word=var_name COL (num | QMARK word?=meta_var)=var_len;
-var_def        := VAR_KW var_decl EQ expr;
+var_def        := var_decl EQ expr;
 assign         := word EQ expr; 
 braccess       := expr LBRAC fnum RBRAC; 
 brange         := expr LBRAC fnum?=r_from COL fnum?=r_to RBRAC; 

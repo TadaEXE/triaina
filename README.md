@@ -1,5 +1,20 @@
 # Triaina
 
+<!--toc:start-->
+- [Triaina](#triaina)
+  - [WTF is balanced ternary logic?](#wtf-is-balanced-ternary-logic)
+    - [Trits, Tibbles and Tryts](#trits-tibbles-and-tryts)
+  - [Syntax](#syntax)
+    - [Variables](#variables)
+    - [The gate keyword](#the-gate-keyword)
+    - [Control structures](#control-structures)
+      - [If else](#if-else)
+      - [While loops](#while-loops)
+    - [For](#for)
+    - [Match](#match)
+  - [Some code examples from the standard library](#some-code-examples-from-the-standard-library)
+<!--toc:end-->
+
 **Triaina** is a complete programming language for balanced ternary logic, without the slightest hint of arithmetic anywhere to be found!
 
 ## WTF is balanced ternary logic?
@@ -14,8 +29,8 @@ Eventhough Triaina works with trit vectors of arbitrary lengths, I will quickly 
 | Name | Length | Base 2 equivalent |
 | ---- | ------ | ----------------- |
 | Trit | 3^0 = 1 | Bit (2^0 = 1) |
-| Tibble | 3^2 = 6 | Nibble (2^2 = 4) |
-| Tryte | 3^3 = 9 | Byte (2^3 = 8) |
+| Tibble | 3^1 = 3 | Nibble (2^2 = 4) |
+| Tryte | 3^2 = 9 | Byte (2^3 = 8) |
 
 ## Syntax
 
@@ -93,11 +108,13 @@ while<0> redmax(or(foo, bar)) { ... } //
 
 ### For
 
-`for` is used to look at each individual trit in a trit-vector. It's designed to allow trit-wise operations with context, as gates have none between individual trits of the operands.
+`for` is used to look at each individual trit in a trivec. It's designed to allow trit-wise operations with context, as gates have none between individual trits of the operands.
 
 ### Match
 
-`match` is used to preform pattern matching over the given trit-vector
+`match` is used to preform pattern matching over the given trivec. There are two placeholders available, while defining a pattern.
+- `?`: fits the exact position it is in
+- `_`: fits all trits from the start to the first specified trit, all trits from the last specified trit to the end, (all trits from the last specified trit to the next specified trit), the entire trivec 
 
 ```rust
 a:1 := -;
