@@ -1,0 +1,11 @@
+if<+> foo {
+  foo => bar;
+}
+elif<0,-> |foo,$0| {
+  var x:? = `-05`;
+  x => foo;
+}
+else<_> {
+  reg r:3;
+  r => r;
+}

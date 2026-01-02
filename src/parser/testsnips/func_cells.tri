@@ -1,0 +1,4 @@
+func(x:2 /&cap:2, tmp:2 = x/ ) with_cells |x:2| {
+  &cap => x;
+  tmp => x;
+}

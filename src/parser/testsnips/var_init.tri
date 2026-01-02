@@ -1,0 +1,2 @@
+var x:3 = foo%bar;
+var y:? = |$0,foo[1:],+0-|;

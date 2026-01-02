@@ -1,0 +1,14 @@
+gate(2) g
+(+,+) => +;
+(_,_) => 0;
+
+func(a:1, b:1 /tmp:2 = |a,b|/ ) f |out:2| {
+  if<+> a {
+    tmp => out;
+  }
+  else<_> {
+    while<0,-> b {
+      g => out;
+    }
+  }
+}
