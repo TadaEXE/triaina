@@ -7,8 +7,8 @@
 %locations
 
 %code requires {
-  #include "ast.hpp"
-  #include "driver.hpp"
+  #include "parser/ast.hpp"
+  #include "parser/driver.hpp"
   #include <memory>
   #include <string>
   #include <vector>

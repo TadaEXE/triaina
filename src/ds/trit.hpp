@@ -46,13 +46,4 @@ static constexpr std::string_view to_string(ds::TritMatch t) {
   }
 }
 
-typedef struct __attribute__((packed)) EntityID {
-  const uint32_t ptr;
-  const uint32_t id;
-
-  EntityID(uint64_t i64)
-      : ptr(static_cast<uint32_t>(i64 >> 32)),
-        id(static_cast<uint32_t>(i64 & 0xFFFFFFFF)) {}
-} eid;
-
 }  // namespace std

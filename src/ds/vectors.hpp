@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "ds/types.hpp"
+#include "ds/trit.hpp"
 
 namespace ds {
 

@@ -8,25 +8,27 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
-BISON_TARGET(Parser grammar/parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.cpp
+BISON_TARGET(Parser src/grammar/parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.cpp
   DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.hpp
 )
 
-FLEX_TARGET(Lexer grammar/lexer.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.yy.cpp)
+FLEX_TARGET(Lexer src/grammar/lexer.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.yy.cpp)
 
 ADD_FLEX_BISON_DEPENDENCY(Lexer Parser)
 
 add_executable(triaina_parser
-  main.cpp
-  lex_bridge.cpp
-  ast.hpp
-  dump.hpp
-  driver.hpp
+  src/parser/main.cpp
+  src/parser/lex_bridge.cpp
+  src/parser/ast.hpp
+  src/parser/dump.hpp
+  src/parser/driver.hpp
   ${BISON_Parser_OUTPUTS}
   ${FLEX_Lexer_OUTPUTS}
 )
 
 target_include_directories(triaina_parser PRIVATE
+  src/
+  # src/parser
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
 )

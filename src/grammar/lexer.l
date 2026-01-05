@@ -3,7 +3,7 @@
 
 %{
   #include "parser.tab.hpp"
-  #include "driver.hpp"
+  #include "parser/driver.hpp"
   #include <cstdlib>
   #include <string>
 

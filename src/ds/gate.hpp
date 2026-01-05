@@ -1,7 +1,6 @@
 #pragma once
 
-#include "ds/tree.hpp"
-#include "ds/types.hpp"
+#include "ds/trit.hpp"
 #include "ds/vectors.hpp"
 
 namespace ds {
@@ -11,6 +10,10 @@ struct GateSpec {
   const Trit result;
 };
 
-class Gate {};
+class Gate {
+ public:
+ private:
+  std::vector<GateSpec> spec;
+};
 
 }  // namespace ds
