@@ -16,20 +16,38 @@ FLEX_TARGET(Lexer src/grammar/lexer.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.yy.cpp)
 
 ADD_FLEX_BISON_DEPENDENCY(Lexer Parser)
 
+add_library(ds STATIC
+  src/ds/gate.cpp
+  src/ds/tree.cpp
+  src/ds/vectors.cpp
+)
+
+target_include_directories(ds PRIVATE
+  src/
+)
+
 add_executable(triaina_parser
   src/parser/main.cpp
   src/parser/lex_bridge.cpp
-  src/parser/ast.hpp
-  src/parser/dump.hpp
-  src/parser/driver.hpp
   ${BISON_Parser_OUTPUTS}
   ${FLEX_Lexer_OUTPUTS}
 )
 
 target_include_directories(triaina_parser PRIVATE
   src/
-  # src/parser
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+add_executable(triaina_runtime
+  src/runtime/main.cpp
+)
+
+target_link_libraries(triaina_runtime
+  ds
+)
+
+target_include_directories(triaina_runtime PRIVATE
+  src/
 )
 

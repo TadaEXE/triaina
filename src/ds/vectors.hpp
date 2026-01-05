@@ -14,7 +14,7 @@ class TriVec : public std::vector<Trit> {
  public:
   TriVec() = default;
   /// @brief Convert string to trit vector (ignores all invalid symbols)
-  explicit TriVec(std::string& input);
+  TriVec(std::string input);
   // Something like:
   // static std::optional<TriVec> from_match_vec(TriMaVec& tmv, std::optional<Trit> wc);
   // Would be better but we will ge trust me bro path
@@ -25,7 +25,7 @@ class TriMaVec : public std::vector<TritMatch> {
  public:
   TriMaVec() = default;
   /// @brief Convert string to tritmatch vector (ignores all invalid symbols)
-  explicit TriMaVec(std::string& input);
+  TriMaVec(std::string input);
 
   std::vector<TriVec> expand_wildcards();
 

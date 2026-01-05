@@ -31,6 +31,7 @@ static constexpr std::string_view to_string(ds::Trit t) {
     case ds::Trit::Plus:
       return "+";
   }
+  return "E";
 }
 
 static constexpr std::string_view to_string(ds::TritMatch t) {
@@ -44,6 +45,7 @@ static constexpr std::string_view to_string(ds::TritMatch t) {
     case ds::TritMatch::Wild:
       return "_";
   }
+  return "E";
 }
 
 }  // namespace std

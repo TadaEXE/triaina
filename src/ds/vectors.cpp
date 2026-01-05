@@ -2,7 +2,7 @@
 
 namespace ds {
 
-TriVec::TriVec(std::string& input) {
+TriVec::TriVec(std::string input) {
   for (auto& i : input | std::views::reverse) {
     switch (i) {
       case '+':
@@ -41,7 +41,7 @@ TriVec::TriVec(TriMaVec& tmv, Trit t) {
   }
 }
 
-TriMaVec::TriMaVec(std::string& input) {
+TriMaVec::TriMaVec(std::string input) {
   has_wildcards_ = false;
   for (auto& i : input | std::views::reverse) {
     switch (i) {
