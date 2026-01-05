@@ -42,20 +42,24 @@ TriVec::TriVec(TriMaVec& tmv, Trit t) {
 }
 
 TriMaVec::TriMaVec(std::string& input) {
+  has_wildcards_ = false;
   for (auto& i : input | std::views::reverse) {
     switch (i) {
       case '+':
         this->push_back(TritMatch::Plus);
+        only_wildcrads_ = false;
         break;
       case '0':
         this->push_back(TritMatch::Zero);
+        only_wildcrads_ = false;
         break;
       case '-':
         this->push_back(TritMatch::Minus);
+        only_wildcrads_ = false;
         break;
       case '_':
-        has_wildcards_ = true;
         this->push_back(TritMatch::Wild);
+        has_wildcards_ = true;
         break;
       default:
         continue;

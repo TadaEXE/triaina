@@ -1,19 +1,24 @@
 #pragma once
 
+#include "ds/tree.hpp"
 #include "ds/trit.hpp"
 #include "ds/vectors.hpp"
 
 namespace ds {
 
-struct GateSpec {
-  const TriVec pattern;
-  const Trit result;
+struct GateArm {
+  TriMaVec pattern;
+  Trit result;
 };
 
 class Gate {
  public:
+  Gate() = default;
+
+  bool init(std::vector<GateArm> arms);
+
  private:
-  std::vector<GateSpec> spec;
+  Tree spec;
 };
 
 }  // namespace ds

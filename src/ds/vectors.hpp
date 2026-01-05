@@ -31,8 +31,11 @@ class TriMaVec : public std::vector<TritMatch> {
 
   bool has_wildcards() const { return has_wildcards_; }
 
+  bool only_wildcrads() const { return only_wildcrads_; }
+
  private:
-  bool has_wildcards_;
+  bool has_wildcards_{true};
+  bool only_wildcrads_{true};
 };
 
 }  // namespace ds

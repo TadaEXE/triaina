@@ -19,7 +19,7 @@ class Tree {
  public:
   Tree() : root(std::make_unique<TreeNode>()) {}
 
-  void set(TriVec pattern, Trit value);
+  void add(TriVec pattern, Trit value);
   std::optional<Trit> match(TriVec pattern);
 
  private:

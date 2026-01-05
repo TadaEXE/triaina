@@ -4,7 +4,7 @@
 
 namespace ds {
 
-void Tree::set(TriVec pattern, Trit value) {
+void Tree::add(TriVec pattern, Trit value) {
   auto* cur = &root;
   for (auto& t : pattern) {
     switch (t) {
