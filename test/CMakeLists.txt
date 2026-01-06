@@ -15,6 +15,10 @@ endif()
 
 add_executable(triaina_tests
   ds/trivec_test.cpp
+  ds/trit_test.cpp
+  ds/tree_test.cpp
+  ds/gate_test.cpp
+  resty_test.cpp
 )
 
 target_link_libraries(triaina_tests
@@ -36,8 +40,6 @@ gtest_discover_tests(triaina_tests
 )
 
 add_custom_target(run-tests
-  COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+  COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${CMAKE_BINARY_DIR} --output-on-failure
   DEPENDS triaina_tests
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
-

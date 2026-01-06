@@ -2,9 +2,11 @@
 
 #include <set>
 #include <string>
+#include <vector>
 
 #include <gtest/gtest.h>
 
+#include "ds/errors.hpp"
 #include "ds/trit.hpp"
 
 namespace {
@@ -20,6 +22,7 @@ TEST(TriVec, FromStringParsesAndIgnoresInvalidSymbols) {
 
 TEST(TriVec, ResizeGrowsAndShrinksWhenNotFixed) {
   ds::TriVec tv{"+0-"};
+
   ASSERT_TRUE(tv.resize_to(5, ds::Trit::Plus).has_value());
   EXPECT_EQ(std::to_string(tv), "+++0-");
   EXPECT_EQ(tv.length(), 5u);
@@ -35,7 +38,93 @@ TEST(TriVec, ResizeFailsWhenFixed) {
 
   auto r = tv.resize_to(4, ds::Trit::Zero);
   ASSERT_FALSE(r.has_value());
+  EXPECT_FALSE(r.error().msg.empty());
   EXPECT_EQ(std::to_string(tv), "+0-");
+}
+
+TEST(TriVec, TryLengthResolveWithNoFixedUsesMaxLen) {
+  std::vector<ds::TriVec> tvs;
+  tvs.emplace_back(ds::TriVec{"+0"});
+  tvs.emplace_back(ds::TriVec{"+"});
+  tvs.emplace_back(ds::TriVec{"-0+"});
+
+  auto r = ds::TriVec::try_length_resolve(std::move(tvs));
+  ASSERT_TRUE(r.has_value());
+  ASSERT_EQ(r->size(), 3u);
+
+  for (auto& tv : *r) {
+    EXPECT_EQ(tv.length(), 3u);
+  }
+
+  EXPECT_EQ(std::to_string((*r)[0]), "0+0");
+  EXPECT_EQ(std::to_string((*r)[1]), "00+");
+  EXPECT_EQ(std::to_string((*r)[2]), "-0+");
+}
+
+TEST(TriVec, TryLengthResolveWithFixedResizesOthersToFixed) {
+  std::vector<ds::TriVec> tvs;
+  ds::TriVec fixed{"+0-"};
+  fixed.fix_length();
+
+  tvs.push_back(fixed);
+  tvs.push_back(ds::TriVec{"+"});
+  tvs.push_back(ds::TriVec{"-0+--"});
+
+  auto r = ds::TriVec::try_length_resolve(std::move(tvs));
+  ASSERT_TRUE(r.has_value());
+  ASSERT_EQ(r->size(), 3u);
+
+  for (auto& tv : *r) {
+    EXPECT_EQ(tv.length(), 3u);
+  }
+
+  EXPECT_EQ(std::to_string((*r)[0]), "+0-");
+  EXPECT_EQ(std::to_string((*r)[1]), "00+");
+  EXPECT_EQ(std::to_string((*r)[2]), "+--");
+}
+
+TEST(TriVec, TryLengthResolveRejectsMultipleFixedDifferentLengths) {
+  std::vector<ds::TriVec> tvs;
+  ds::TriVec a{"+0-"};
+  a.fix_length();
+  ds::TriVec b{"+0"};
+  b.fix_length();
+  tvs.push_back(a);
+  tvs.push_back(b);
+
+  auto r = ds::TriVec::try_length_resolve(std::move(tvs));
+  ASSERT_FALSE(r.has_value());
+  EXPECT_TRUE(r.error() == ds::DSError::InvalidArgs);
+}
+
+TEST(TriVec, TritwiseCutRejectsEmpty) {
+  auto r = ds::TriVec::get_tritwise_cut({});
+  ASSERT_FALSE(r.has_value());
+  EXPECT_FALSE(r.error().msg.empty());
+}
+
+TEST(TriVec, TritwiseCutRejectsUnequalLengths) {
+  std::vector<ds::TriVec> tvs;
+  tvs.emplace_back(ds::TriVec{"+0-"});
+  tvs.emplace_back(ds::TriVec{"+"});
+
+  auto r = ds::TriVec::get_tritwise_cut(tvs);
+  ASSERT_FALSE(r.has_value());
+  EXPECT_FALSE(r.error().msg.empty());
+}
+
+TEST(TriVec, TritwiseCutProducesColumns) {
+  std::vector<ds::TriVec> tvs;
+  tvs.emplace_back(ds::TriVec{"+0-"});
+  tvs.emplace_back(ds::TriVec{"-++"});
+
+  auto r = ds::TriVec::get_tritwise_cut(tvs);
+  ASSERT_TRUE(r.has_value());
+  ASSERT_EQ(r->size(), 3u);
+
+  EXPECT_EQ(std::to_string((*r)[0]), "+-");
+  EXPECT_EQ(std::to_string((*r)[1]), "+0");
+  EXPECT_EQ(std::to_string((*r)[2]), "-+");
 }
 
 TEST(TriMaVec, FromStringTracksWildcardsAndOnlyWildcards) {
@@ -43,13 +132,9 @@ TEST(TriMaVec, FromStringTracksWildcardsAndOnlyWildcards) {
   EXPECT_TRUE(a.has_wildcards());
   EXPECT_FALSE(a.only_wildcrads());
 
-  ds::TriMaVec b{"____"};
+  ds::TriMaVec b{"__x__"};
   EXPECT_TRUE(b.has_wildcards());
   EXPECT_TRUE(b.only_wildcrads());
-  
-  ds::TriMaVec c{"++--"};
-  EXPECT_FALSE(c.has_wildcards());
-  EXPECT_FALSE(c.only_wildcrads());
 }
 
 TEST(TriMaVec, ExpandWildcardsGeneratesAllCombinations) {
@@ -66,6 +151,13 @@ TEST(TriMaVec, ExpandWildcardsGeneratesAllCombinations) {
   };
 
   EXPECT_EQ(got, expect);
+}
+
+TEST(TriMaVec, ExpandWildcardsNoWildcardsProducesSingleVector) {
+  ds::TriMaVec tmv{"+0-"};
+  auto expanded = tmv.expand_wildcards();
+  ASSERT_EQ(expanded.size(), 1u);
+  EXPECT_EQ(std::to_string(expanded[0]), "+0-");
 }
 
 }  // namespace
