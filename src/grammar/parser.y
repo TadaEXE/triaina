@@ -12,6 +12,7 @@
   #include <memory>
   #include <string>
   #include <vector>
+  #include <cstdint>
 
   using NodeList = std::vector<NodePtr>;
 }
@@ -68,6 +69,7 @@
 %token ELIF "elif"
 %token ELSE "else"
 %token WHILE "while"
+%token NODE "node"
 
 %token ERROR
 %token END 0
@@ -75,7 +77,8 @@
 %type <NodePtr> program statement chain hop atom bus_ref list braccess mem_op cat literal expr scope source_segment var_dec reg_dec
 %type <NodeList> hop_list br_list source_segment_list
 %type <char> trit 
-%type <std::string> trit_seq opt_rnum rnum size_spec
+%type <std::string> trit_seq rnum size_spec opt_rnum
+%type <int8_t> slice_dir
 
 %left ELSE
 %%
@@ -210,14 +213,20 @@ cat
 
 braccess
   : mem_op { $$ = std::move($1); }
-  | mem_op LBRACK opt_rnum COLON opt_rnum RBRACK
+  | mem_op LBRACK opt_rnum slice_dir opt_rnum RBRACK
     {
       auto s = Node::make(NodeType::Slice);
       s->add(std::move($1));
       if (!$3.empty()) s->set("lo", std::move($3));
       if (!$5.empty()) s->set("hi", std::move($5));
+      s->set("step", std::move($4));
       $$ = std::move(s);
     }
+  ;
+
+slice_dir
+  : GT { $$ = 1; }
+  | LT { $$ = -1; }
   ;
 
 opt_rnum

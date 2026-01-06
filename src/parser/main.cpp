@@ -44,7 +44,7 @@ int main() {
   }
   dump_ast(*driver.program);
 
-  SomeVisitor vit{};
-  Node::dfs_travers(*driver.program, vit);
+  // SomeVisitor vit{};
+  // Node::dfs_travers(*driver.program, vit);
   return 0;
 }

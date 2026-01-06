@@ -57,8 +57,8 @@ NUM     [1-9][0-9]*
 "-"   { return Parser::make_MINUS(LOC); }
 
 "=>"  { return Parser::make_ARROW(LOC); }
-">"   { return Parser::make_LT(LOC); }
-"<"   { return Parser::make_GT(LOC); }
+"<"   { return Parser::make_LT(LOC); }
+">"   { return Parser::make_GT(LOC); }
 
 "*"   { return Parser::make_STAR(LOC); }
 "&"   { return Parser::make_AMP(LOC); }
