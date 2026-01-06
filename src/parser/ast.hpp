@@ -1,7 +1,8 @@
 #pragma once
 /*
-* GIVE ME SOME MACROS AND CALL ME THE PUNISHER, DADDY UUUUUUUUUUUUUUYYYYYYYYYYYYYYYAAAAAAAAAA
-*/
+ * GIVE ME SOME MACROS AND CALL ME THE PUNISHER, DADDY
+ * UUUUUUUUUUUUUUYYYYYYYYYYYYYYYAAAAAAAAAA
+ */
 
 #include <cstddef>
 #include <memory>
@@ -93,7 +94,9 @@ struct Node {
 
   explicit Node(NodeType k) : kind(std::move(k)) {}
 
-  static NodePtr make(NodeType kind) { return std::make_unique<Node>(std::move(kind)); }
+  static NodePtr make(NodeType kind) {
+    return std::make_unique<Node>(std::move(kind));
+  }
 
   template <Visitor V>
   void accept(V& v) {
@@ -130,8 +133,7 @@ struct Node {
   }
 
   Node& add_all(std::vector<NodePtr> cs) {
-    for (auto& c : cs)
-      children.push_back(std::move(c));
+    for (auto& c : cs) children.push_back(std::move(c));
     return *this;
   }
 };

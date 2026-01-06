@@ -2,7 +2,5 @@
 
 #include "ast.hpp"
 
-template<NodeType T>
-struct AstFilter {
-  
-};
+template <NodeType T>
+struct AstFilter {};

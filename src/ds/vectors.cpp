@@ -1,6 +1,9 @@
 #include "ds/vectors.hpp"
 
+#include <vector>
+
 #include "ds/trit.hpp"
+#include "resty.hpp"
 
 namespace ds {
 
@@ -22,7 +25,7 @@ TriVec::TriVec(std::string input) {
   }
 }
 
-TriVec::TriVec(TriMaVec& tmv) {
+TriVec::TriVec(const TriMaVec& tmv) {
   for (auto& tm : tmv.data()) {
     switch (tm) {
       case TritMatch::Plus:
@@ -38,6 +41,28 @@ TriVec::TriVec(TriMaVec& tmv) {
         continue;
     }
   }
+}
+
+res::vexpected TriVec::resize_to(size_t len, Trit fill) {
+  if (fixed_) return std::unexpected("Can not resize fixed vector.");
+
+  auto cur = length();
+  if (cur == len) return {};
+
+  if (len > cur) {
+    for (auto i = cur; i < len; ++i) {
+      data_.push_back(fill);
+    }
+    return {};
+  }
+
+  for (auto i = cur; i > len; --i) {
+    data_.pop_back();
+  }
+  return {};
+}
+
+res::expected<std::vector<TriVec>> try_length_resolve(std::vector<TriVec> tvs) {
 }
 
 TriMaVec::TriMaVec(std::string input) {
@@ -66,14 +91,17 @@ TriMaVec::TriMaVec(std::string input) {
   }
 }
 
-std::vector<TriMaVec> TriMaVec::resolve_wildcards(std::vector<TriMaVec>& tmvs, size_t i) const {
+std::vector<TriMaVec> TriMaVec::resolve_wildcards(std::vector<TriMaVec>& tmvs,
+                                                  size_t i) const {
   std::vector<TriMaVec> res;
   const auto& test = tmvs[0].data();
   if (i >= test.size()) return tmvs;
 
   size_t j = i;
   for (; j < test.size(); ++j) {
-    if (test[j] == TritMatch::Wild) { break; }
+    if (test[j] == TritMatch::Wild) {
+      break;
+    }
   }
   if (j >= test.size()) return tmvs;
 

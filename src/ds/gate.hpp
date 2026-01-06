@@ -21,7 +21,8 @@ class Gate {
   res::vexpected init();
   res::vexpected init(std::vector<GateArm> arms);
 
-  res::expected<Trit> eval(TriVec tv);
+  res::expected<Trit> eval(TriVec tv) const;
+  res::expected<TriVec> call(std::vector<TriVec> tvs) const;
 
  private:
   Tree spec_;

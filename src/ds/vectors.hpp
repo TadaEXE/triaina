@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "ds/trit.hpp"
+#include "resty.hpp"
 
 namespace ds {
 
@@ -21,15 +22,29 @@ class TriVec {
   /// @brief Convert string to trit vector (ignores all invalid symbols)
   TriVec(std::string input);
   // Something like:
-  // static std::optional<TriVec> from_match_vec(TriMaVec& tmv, std::optional<Trit> wc);
-  // Would be better but we will ge trust me bro path
-  explicit TriVec(TriMaVec& tmv);
+  // static std::optional<TriVec> from_match_vec(TriMaVec& tmv,
+  // std::optional<Trit> wc); Would be better but we will ge trust me bro path
+  explicit TriVec(const TriMaVec& tmv);
 
-  const auto& data() { return data_; }
+  explicit TriVec(std::vector<Trit>& data) : data_(data) {}
+
+  const std::vector<Trit>& data() { return data_; }
+
+  res::vexpected resize_to(size_t len, Trit fill = Trit::Zero);
+
+  inline size_t length() const { return data_.size(); }
+
+  inline bool fixed() const { return fixed_; }
+
+  inline void fix_length() { fixed_ = true; }
 
  private:
   std::vector<Trit> data_;
+  bool fixed_{false};
 };
+
+static res::expected<std::vector<TriVec>> try_length_resolve(
+    std::vector<TriVec> tvs);
 
 class TriMaVec {
  public:
@@ -48,14 +63,15 @@ class TriMaVec {
 
   bool only_wildcrads() const { return only_wildcrads_; }
 
-  const auto& data() { return data_; }
+  const auto& data() const { return data_; }
 
  private:
   std::vector<TritMatch> data_;
   bool has_wildcards_{false};
   bool only_wildcrads_{false};
 
-  std::vector<TriMaVec> resolve_wildcards(std::vector<TriMaVec>& tmvs, size_t i = 0) const;
+  std::vector<TriMaVec> resolve_wildcards(std::vector<TriMaVec>& tmvs,
+                                          size_t i = 0) const;
 };
 
 }  // namespace ds

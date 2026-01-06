@@ -31,6 +31,5 @@ inline void dump_ast(const Node& n, int indent = 0) {
   }
 
   std::cout << "\n";
-  for (const auto& c : n.children)
-    dump_ast(*c, indent + 1);
+  for (const auto& c : n.children) dump_ast(*c, indent + 1);
 }

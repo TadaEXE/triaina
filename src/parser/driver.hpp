@@ -25,6 +25,7 @@ struct Driver {
   void set_program(NodePtr p) { program = std::move(p); }
 
   void on_error(int line, int col, const std::string& msg) {
-    error_msg.push_back(std::to_string(line) + ":" + std::to_string(col) + ": " + msg);
+    error_msg.push_back(std::to_string(line) + ":" + std::to_string(col) +
+                        ": " + msg);
   }
 };
