@@ -1,18 +1,20 @@
 #include "ds/vectors.hpp"
 
+#include "ds/trit.hpp"
+
 namespace ds {
 
 TriVec::TriVec(std::string input) {
   for (auto& i : input | std::views::reverse) {
     switch (i) {
       case '+':
-        this->push_back(Trit::Plus);
+        data_.push_back(Trit::Plus);
         break;
       case '0':
-        this->push_back(Trit::Zero);
+        data_.push_back(Trit::Zero);
         break;
       case '-':
-        this->push_back(Trit::Minus);
+        data_.push_back(Trit::Minus);
         break;
       default:
         continue;
@@ -20,20 +22,17 @@ TriVec::TriVec(std::string input) {
   }
 }
 
-TriVec::TriVec(TriMaVec& tmv, Trit t) {
-  for (auto& tm : tmv) {
+TriVec::TriVec(TriMaVec& tmv) {
+  for (auto& tm : tmv.data()) {
     switch (tm) {
       case TritMatch::Plus:
-        this->push_back(Trit::Plus);
+        data_.push_back(Trit::Plus);
         break;
       case TritMatch::Zero:
-        this->push_back(Trit::Zero);
+        data_.push_back(Trit::Zero);
         break;
       case TritMatch::Minus:
-        this->push_back(Trit::Minus);
-        break;
-      case TritMatch::Wild:
-        this->push_back(t);
+        data_.push_back(Trit::Minus);
         break;
       default:
         continue;
@@ -42,23 +41,23 @@ TriVec::TriVec(TriMaVec& tmv, Trit t) {
 }
 
 TriMaVec::TriMaVec(std::string input) {
-  has_wildcards_ = false;
+  only_wildcrads_ = true;
   for (auto& i : input | std::views::reverse) {
     switch (i) {
       case '+':
-        this->push_back(TritMatch::Plus);
+        data_.push_back(TritMatch::Plus);
         only_wildcrads_ = false;
         break;
       case '0':
-        this->push_back(TritMatch::Zero);
+        data_.push_back(TritMatch::Zero);
         only_wildcrads_ = false;
         break;
       case '-':
-        this->push_back(TritMatch::Minus);
+        data_.push_back(TritMatch::Minus);
         only_wildcrads_ = false;
         break;
       case '_':
-        this->push_back(TritMatch::Wild);
+        data_.push_back(TritMatch::Wild);
         has_wildcards_ = true;
         break;
       default:
@@ -67,14 +66,36 @@ TriMaVec::TriMaVec(std::string input) {
   }
 }
 
-std::vector<TriVec> TriMaVec::expand_wildcards() {
+std::vector<TriMaVec> TriMaVec::resolve_wildcards(std::vector<TriMaVec>& tmvs, size_t i) const {
+  std::vector<TriMaVec> res;
+  const auto& test = tmvs[0].data();
+  if (i >= test.size()) return tmvs;
+
+  size_t j = i;
+  for (; j < test.size(); ++j) {
+    if (test[j] == TritMatch::Wild) { break; }
+  }
+  if (j >= test.size()) return tmvs;
+
+  for (auto& tmv : tmvs) {
+    auto tmp = tmv;
+    tmp.data_[j] = TritMatch::Plus;
+    res.push_back(tmp);
+    tmp.data_[j] = TritMatch::Zero;
+    res.push_back(tmp);
+    tmp.data_[j] = TritMatch::Minus;
+    res.push_back(tmp);
+  }
+
+  return resolve_wildcards(res, j);
+}
+
+std::vector<TriVec> TriMaVec::expand_wildcards() const {
+  std::vector<TriMaVec> tmp({*this});
+  auto fin = resolve_wildcards(tmp);
   std::vector<TriVec> res;
-  if (has_wildcards_) {
-    res.push_back({*this, Trit::Minus});
-    res.push_back({*this, Trit::Zero});
-    res.push_back({*this, Trit::Plus});
-  } else {
-    res.push_back({*this});
+  for (auto& tmv : fin) {
+    res.push_back(TriVec{tmv});
   }
   return res;
 }

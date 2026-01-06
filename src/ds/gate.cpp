@@ -2,46 +2,65 @@
 
 #include <cmath>
 #include <expected>
+#include <format>
 
 #include "ds/vectors.hpp"
 #include "resty.hpp"
 
 namespace ds {
 
-res::vexpected Gate::init(std::vector<GateArm> arms) {
-  if (arms.empty()) return std::unexpected("Arms empty");
-  size_t added = 0;
-  for (auto& arm : arms) {
-    auto expans = arm.pattern.expand_wildcards();
-    if (!arm.pattern.has_wildcards()) {
-      auto& pat = expans[0];
-      if (spec.match(pat))
-        return std::unexpected(std::to_string(pat).append(" is already defined."));
+res::vexpected Gate::add_arm(const GateArm& arm) {
+  auto expans = arm.pattern.expand_wildcards();
+  if (!arm.pattern.has_wildcards()) {
+    auto& pat = expans[0];
+    if (spec_.match(pat))
+      return std::unexpected(std::to_string(pat).append(" is already defined."));
 
-      spec.add(pat, arm.result);
-      ++added;
-      continue;
-    }
-
-    for (auto& expan : expans) {
-      auto match = spec.match(expan);
-      if (match && *match != arm.result) return std::unexpected("Illegal match");
-      if (match) continue;
-
-      spec.add(expan, arm.result);
-      ++added;
-    }
+    spec_.add(pat, arm.result);
+    ++arm_count_;
+    return {};
   }
 
-  if (added != std::pow(arms.size(), 3))
-    return std::unexpected("Not enough arms where defined");
+  for (auto& expan : expans) {
+    auto match = spec_.match(expan);
+    if (!arm.pattern.only_wildcrads() && match && *match != arm.result) {
+      return std::unexpected(std::format("Redefinition of {} => {} to {}",
+                                         std::to_string(expan), std::to_string(*match),
+                                         std::to_string(arm.result)));
+    }
+    if (match) continue;
 
+    spec_.add(expan, arm.result);
+    ++arm_count_;
+  }
   return {};
 }
 
-Trit Gate::eval(TriVec tv) {
-  if (auto m = spec.match(tv)) { return *m; }
-  return Trit::Zero;
+res::vexpected Gate::init() {
+  auto exp_arm_count = std::pow(3, width_);
+  if (arm_count_ != exp_arm_count)
+    return std::unexpected(std::format("Gate defined {} out of {} expected arms",
+                                       arm_count_, exp_arm_count));
+
+  inited_ = true;
+  return {};
+}
+
+res::vexpected Gate::init(std::vector<GateArm> arms) {
+  if (arms.empty()) return std::unexpected("Arms empty");
+
+  for (auto& arm : arms) {
+    if (auto e = add_arm(arm); !e.has_value()) { return e; }
+  }
+
+  return init();
+}
+
+res::expected<Trit> Gate::eval(TriVec tv) {
+  if (!inited_) return std::unexpected("Uninitialized gate can not evaluate input");
+  if (auto m = spec_.match(tv)) return *m;
+
+  return std::unexpected("Trit could not be matched due to maleformed gate.");
 }
 
 }  // namespace ds

@@ -14,14 +14,20 @@ struct GateArm {
 
 class Gate {
  public:
-  Gate() = default;
+  explicit Gate(size_t width) : width_(width) {}
 
+  res::vexpected add_arm(const GateArm& arm);
+
+  res::vexpected init();
   res::vexpected init(std::vector<GateArm> arms);
 
-  Trit eval(TriVec tv);
+  res::expected<Trit> eval(TriVec tv);
 
  private:
-  Tree spec;
+  Tree spec_;
+  bool inited_{false};
+  size_t arm_count_{0};
+  size_t width_{0};
 };
 
 }  // namespace ds

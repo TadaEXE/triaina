@@ -6,7 +6,7 @@ namespace ds {
 
 void Tree::add(TriVec pattern, Trit value) {
   auto* cur = &root;
-  for (auto& t : pattern) {
+  for (auto& t : pattern.data()) {
     switch (t) {
       case Trit::Minus:
         if (!(*cur)->mc) { (*cur)->mc = std::make_unique<TreeNode>(); }
@@ -28,7 +28,7 @@ void Tree::add(TriVec pattern, Trit value) {
 
 std::optional<Trit> Tree::match(TriVec pattern) {
   auto* cur = &root;
-  for (auto& t : pattern) {
+  for (auto& t : pattern.data()) {
     switch (t) {
       case Trit::Minus:
         if (!(*cur)->mc) return std::nullopt;
