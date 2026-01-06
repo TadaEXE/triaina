@@ -1,4 +1,4 @@
-#include "ds/vectors.hpp"
+#include "ds/trivec.hpp"
 
 #include <vector>
 

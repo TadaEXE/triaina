@@ -4,7 +4,7 @@
 #include <expected>
 #include <format>
 
-#include "ds/vectors.hpp"
+#include "ds/trivec.hpp"
 #include "resty.hpp"
 
 namespace ds {

@@ -3,7 +3,7 @@
 
 #include "ds/gate.hpp"
 #include "ds/trit.hpp"
-#include "ds/vectors.hpp"
+#include "ds/trivec.hpp"
 
 int main(int argc, char* argv[]) {
   // std::vector<ds::GateArm> arms = {{{"++"}, ds::Trit::Minus},

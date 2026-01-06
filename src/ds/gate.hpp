@@ -2,7 +2,7 @@
 
 #include "ds/tree.hpp"
 #include "ds/trit.hpp"
-#include "ds/vectors.hpp"
+#include "ds/trivec.hpp"
 #include "resty.hpp"
 
 namespace ds {

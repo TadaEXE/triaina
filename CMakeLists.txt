@@ -20,7 +20,7 @@ ADD_FLEX_BISON_DEPENDENCY(Lexer Parser)
 add_library(ds STATIC
   src/ds/gate.cpp
   src/ds/tree.cpp
-  src/ds/vectors.cpp
+  src/ds/trivec.cpp
 )
 
 target_include_directories(ds PRIVATE
@@ -50,5 +50,14 @@ target_link_libraries(triaina_runtime
 
 target_include_directories(triaina_runtime PRIVATE
   src/
+)
+
+include(CTest)
+enable_testing()
+
+add_subdirectory(test EXCLUDE_FROM_ALL)
+
+add_custom_target(build-tests
+  DEPENDS triaina_tests
 )
 

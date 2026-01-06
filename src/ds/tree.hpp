@@ -3,7 +3,7 @@
 #include <memory>
 #include <optional>
 
-#include "ds/vectors.hpp"
+#include "ds/trivec.hpp"
 
 namespace ds {
 
