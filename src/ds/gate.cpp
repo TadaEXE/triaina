@@ -77,6 +77,11 @@ res::expected<Trit> Gate::eval(const TriVec& tv) const {
 }
 
 res::expected<TriVec> Gate::call(const std::vector<TriVec>& tvs) const {
+  if (!inited_) {
+    return res::unexpected("Uninitialized gate can not evaluate input",
+                           DSError::UseBeforeInit);
+  }
+
   if (tvs.size() != width_) {
     return res::unexpected(
         std::format("Gate of width {} was called with {} arguments.", width_,

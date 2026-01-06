@@ -86,6 +86,8 @@ res::expected<std::vector<TriVec>> TriVec::try_length_resolve(
   }
 
   for (auto& tv : tvs) {
+    if (tv.fixed()) continue;
+
     if (auto r = tv.resize_to(target_len); !r.has_value()) {
       return res::unexpected(r.error());
     }
