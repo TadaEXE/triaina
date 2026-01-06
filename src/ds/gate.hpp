@@ -3,6 +3,7 @@
 #include "ds/tree.hpp"
 #include "ds/trit.hpp"
 #include "ds/vectors.hpp"
+#include "resty.hpp"
 
 namespace ds {
 
@@ -15,7 +16,9 @@ class Gate {
  public:
   Gate() = default;
 
-  bool init(std::vector<GateArm> arms);
+  res::vexpected init(std::vector<GateArm> arms);
+
+  Trit eval(TriVec tv);
 
  private:
   Tree spec;
