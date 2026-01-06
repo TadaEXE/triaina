@@ -1,8 +1,8 @@
-#include <gtest/gtest.h>
+#include "ds/trit.hpp"
 
 #include <string_view>
 
-#include "ds/trit.hpp"
+#include <gtest/gtest.h>
 
 namespace {
 

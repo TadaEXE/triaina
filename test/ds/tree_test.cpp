@@ -1,10 +1,11 @@
-#include <gtest/gtest.h>
+#include "ds/tree.hpp"
 
 #include <optional>
 
-#include "ds/tree.hpp"
-#include "ds/trivec.hpp"
+#include <gtest/gtest.h>
+
 #include "ds/trit.hpp"
+#include "ds/trivec.hpp"
 
 namespace {
 
