@@ -9,13 +9,16 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
-BISON_TARGET(Parser src/grammar/parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.cpp
+BISON_TARGET(Parser src/grammar/parser.y
+  ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.cpp
   DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.hpp
 )
 
 FLEX_TARGET(Lexer src/grammar/lexer.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.yy.cpp)
 
 ADD_FLEX_BISON_DEPENDENCY(Lexer Parser)
+
+add_compile_definitions("DEBUG=$<CONFIG:Debug>")
 
 add_library(ds STATIC
   src/ds/gate.cpp

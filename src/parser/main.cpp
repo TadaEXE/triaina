@@ -1,8 +1,6 @@
 #include <cstdio>
 #include <iostream>
 
-#include <unistd.h>
-
 #include "driver.hpp"
 #include "dump.hpp"
 #include "parser.tab.hpp"

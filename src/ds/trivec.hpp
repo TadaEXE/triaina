@@ -20,13 +20,19 @@ class TriVec {
   TriVec& operator=(TriVec&&) = default;
 
   /// @brief Convert string to trit vector (ignores all invalid symbols)
-  TriVec(std::string input);
+  TriVec(const std::string& input);
   // Something like:
   // static std::optional<TriVec> from_match_vec(TriMaVec& tmv,
   // std::optional<Trit> wc); Would be better but we will ge trust me bro path
   explicit TriVec(const TriMaVec& tmv);
 
-  explicit TriVec(std::vector<Trit>& data) : data_(data) {}
+  explicit TriVec(const std::vector<Trit>& data) : data_(data) {}
+
+  static res::expected<std::vector<TriVec>> try_length_resolve(
+      std::vector<TriVec> tvs);
+
+  static res::expected<std::vector<TriVec>> get_tritwise_cut(
+      const std::vector<TriVec>& tvs);
 
   const std::vector<Trit>& data() { return data_; }
 
@@ -42,9 +48,6 @@ class TriVec {
   std::vector<Trit> data_;
   bool fixed_{false};
 };
-
-static res::expected<std::vector<TriVec>> try_length_resolve(
-    std::vector<TriVec> tvs);
 
 class TriMaVec {
  public:

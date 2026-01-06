@@ -3,11 +3,12 @@
 #include <vector>
 
 #include "ds/trit.hpp"
+#include "errors.hpp"
 #include "resty.hpp"
 
 namespace ds {
 
-TriVec::TriVec(std::string input) {
+TriVec::TriVec(const std::string& input) {
   for (auto& i : input | std::views::reverse) {
     switch (i) {
       case '+':
@@ -44,7 +45,7 @@ TriVec::TriVec(const TriMaVec& tmv) {
 }
 
 res::vexpected TriVec::resize_to(size_t len, Trit fill) {
-  if (fixed_) return std::unexpected("Can not resize fixed vector.");
+  if (fixed_) return res::unexpected("Can not resize fixed vector.");
 
   auto cur = length();
   if (cur == len) return {};
@@ -62,7 +63,58 @@ res::vexpected TriVec::resize_to(size_t len, Trit fill) {
   return {};
 }
 
-res::expected<std::vector<TriVec>> try_length_resolve(std::vector<TriVec> tvs) {
+res::expected<std::vector<TriVec>> TriVec::try_length_resolve(
+    std::vector<TriVec> tvs) {
+  size_t target_len = 0;
+  bool fixed = false;
+  for (auto& tv : tvs) {
+    if (tv.fixed()) {
+      if (fixed && tv.length() != target_len) {
+        return res::unexpected(
+            "Can not resolve length for multiple fixed size vectors.",
+            DSError::InvalidArgs);
+      }
+      if (fixed) continue;
+
+      fixed = true;
+      target_len = tv.length();
+    }
+
+    if (!fixed && tv.length() > target_len) {
+      target_len = tv.length();
+    }
+  }
+
+  for (auto& tv : tvs) {
+    if (auto r = tv.resize_to(target_len); !r.has_value()) {
+      return res::unexpected(r.error());
+    }
+  }
+
+  return tvs;
+}
+
+res::expected<std::vector<TriVec>> TriVec::get_tritwise_cut(
+    const std::vector<TriVec>& tvs) {
+  if (tvs.empty())
+    return res::unexpected("Can not do tritwise cut on empty args.");
+
+  size_t len = tvs[0].length();
+  for (auto& tv : tvs) {
+    if (tv.length() != len) {
+      return res::unexpected("Can not tritwise cut vectors of unequal length.");
+    }
+  }
+
+  std::vector<TriVec> res;
+  for (size_t i = 0; i < tvs[0].length(); ++i) {
+    TriVec tmp;
+    for (auto& tv : tvs) {
+      tmp.data_.push_back(tv.data_[i]);
+    }
+    res.push_back(tmp);
+  }
+  return res;
 }
 
 TriMaVec::TriMaVec(std::string input) {
