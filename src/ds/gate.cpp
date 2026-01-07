@@ -41,7 +41,7 @@ res::vexpected Gate::add_arm(const GateArm& arm) {
 }
 
 res::vexpected Gate::init() {
-  auto exp_arm_count = std::pow(3, width_);
+  auto exp_arm_count = std::pow(3, arity_);
   if (arm_count_ != exp_arm_count)
     return res::unexpected(
         std::format("Gate defined {} out of {} expected arms", arm_count_,
@@ -82,9 +82,9 @@ res::expected<TriVec> Gate::call(const std::vector<TriVec>& tvs) const {
                            DSError::UseBeforeInit);
   }
 
-  if (tvs.size() != width_) {
+  if (tvs.size() != arity_) {
     return res::unexpected(
-        std::format("Gate of width {} was called with {} arguments.", width_,
+        std::format("Gate of width {} was called with {} arguments.", arity_,
                     tvs.size()),
         DSError::InvalidArgs);
   }

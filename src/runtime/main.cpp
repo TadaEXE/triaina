@@ -53,11 +53,11 @@ int main(int argc, char* argv[]) {
   //
   // std::cout << "Resized b " << std::to_string(b) << std::endl;
 
-  res::Error e1{"hello", FooError::One};
-
-  if (FooError::One == e1) {
-    std::cout << e1.msg << std::endl;
-  }
+  // res::Error e1{"hello", FooError::One};
+  //
+  // if (FooError::One == e1) {
+  //   std::cout << e1.msg << std::endl;
+  // }
 
   return 0;
 }

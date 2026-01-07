@@ -9,8 +9,12 @@ namespace res {
 
 struct Error {
   std::string msg;
+
+#if (DEBUG_BUILD || TEST_BUILD)
   std::any dbg_tag{};
-  std::unique_ptr<Error> inner{nullptr};
+#endif
+
+  std::unique_ptr<Error> inner{};
 
   Error& operator+=(Error&& other) {
     if (this == &other) return *this;
@@ -26,6 +30,7 @@ struct Error {
     return *this;
   }
 
+#if (DEBUG_BUILD || TEST_BUILD)
   template <typename T>
     requires requires(T t1, T t2) { t1 == t2; }
   bool operator==(const T& ty) {
@@ -34,19 +39,28 @@ struct Error {
     auto val = std::any_cast<T>(dbg_tag);
     return val == ty;
   }
+#endif
 };
 
 static Error operator+(const Error& lhs, Error&& rhs) {
   if (&lhs == &rhs) {
     return {
         .msg = lhs.msg,
+
+#if (DEBUG_BUILD || TEST_BUILD)
         .dbg_tag = lhs.dbg_tag,
+#endif
+
     };
   }
 
   return {
       .msg = lhs.msg,
+
+#if (DEBUG_BUILD || TEST_BUILD)
       .dbg_tag = lhs.dbg_tag,
+#endif
+
       .inner = std::make_unique<Error>(std::move(rhs)),
   };
 }
@@ -60,7 +74,11 @@ static inline std::unexpected<Error> unexpected(const std::string& msg,
                                                 std::any dbg_tag = {}) {
   return std::unexpected<Error>(Error{
       .msg = msg,
+
+#if (DEBUG_BUILD || TEST_BUILD)
       .dbg_tag = dbg_tag,
+#endif
+
   });
 }
 
@@ -73,7 +91,11 @@ static inline std::unexpected<Error> unexpected(Error& inner,
                                                 std::any dbg_tag = {}) {
   return std::unexpected<Error>(Error{
                                     .msg = msg,
+
+#if (DEBUG_BUILD || TEST_BUILD)
                                     .dbg_tag = dbg_tag,
+#endif
+
                                 } +
                                 std::move(inner));
 }

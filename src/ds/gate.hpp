@@ -14,7 +14,7 @@ struct GateArm {
 
 class Gate {
  public:
-  explicit Gate(size_t width) : width_(width) {}
+  explicit Gate(size_t arity) : arity_(arity) {}
 
   res::vexpected add_arm(const GateArm& arm);
 
@@ -24,11 +24,13 @@ class Gate {
   res::expected<Trit> eval(const TriVec& tv) const;
   res::expected<TriVec> call(const std::vector<TriVec>& tvs) const;
 
+  size_t arity() const { return arity_; }
+
  private:
   Tree spec_;
   bool inited_{false};
   size_t arm_count_{0};
-  size_t width_{0};
+  size_t arity_{0};
 };
 
 }  // namespace ds
