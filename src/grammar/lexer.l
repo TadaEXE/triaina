@@ -36,18 +36,25 @@
     return l;
   }
 
-  #define LOC (driver.loc ? token_loc(*driver.loc, yytext, yyleng) : location{})
+  static inline void ensure_filename(location& loc, const std::string& fn) {
+    loc.begin.filename = &fn;
+    loc.end.filename = &fn;
+  }
+
+  #define LOC (driver.loc ? (ensure_filename(*driver.loc, driver.filename)), \
+    token_loc(*driver.loc, yytext, yyleng) : location{})
 %}
 
 WS      [ \t\r\n]+
 WORD    [a-zA-Z_][a-zA-Z_0-9]*
-
+CHARS   [.]*
 NUM     [1-9][0-9]*
 
 %%
 
 {WS} {
   if (driver.loc) {
+    ensure_filename(*driver.loc, driver.filename);
     (void)token_loc(*driver.loc, yytext, yyleng);
   }
 }
@@ -91,6 +98,7 @@ NUM     [1-9][0-9]*
 
 {NUM} { return Parser::make_NUM(std::string(yytext), LOC); }
 {WORD} { return Parser::make_WORD(std::string(yytext), LOC); }
+{CHARS} { return Parser::make_CHARS(std::string(yytext), LOC); }
 <<EOF>> { return Parser::make_END(LOC); }
 
 . {

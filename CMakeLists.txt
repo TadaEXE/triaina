@@ -20,7 +20,7 @@ flex_target(Lexer src/grammar/lexer.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.yy.cpp)
 
 add_flex_bison_dependency(Lexer Parser)
 
-# add_compile_definitions("DEBUG_BUILD=$<CONFIG:Debug>")
+add_compile_definitions("DEBUG_BUILD=$<CONFIG:Debug>")
 add_library(ds STATIC src/ds/gate.cpp src/ds/tree.cpp src/ds/trivec.cpp)
 
 target_include_directories(ds PRIVATE src/)
@@ -29,6 +29,7 @@ add_executable(
     triaina_parser
     src/parser/main.cpp
     src/parser/lex_bridge.cpp
+    src/parser/driver.cpp
     ${BISON_Parser_OUTPUTS}
     ${FLEX_Lexer_OUTPUTS}
 )

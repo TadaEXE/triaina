@@ -32,7 +32,7 @@ Eventhough Triaina works with trit vectors of arbitrary lengths, I will quickly 
 | Tibble | 3^1 = 3 | Nibble (2^2 = 4) |
 | Tryte | 3^2 = 9 | Byte (2^3 = 8) |
 
-## Syntax
+## Syntax (Very old! Look at simpgrammar.md)
 
 ### Variables
 

@@ -1,17 +1,18 @@
 #include <cstdio>
 #include <iostream>
 
+#include "ast/arena.hpp"
 #include "driver.hpp"
-#include "dump.hpp"
 #include "parser.tab.hpp"
-#include "visitor.hpp"
+#include "parser/ast/dump.hpp"
 
 int triaina_lex_init(yyscan_t* scanner);
 int triaina_lex_destroy(yyscan_t scanner);
 void triaina_set_in(FILE* in_str, yyscan_t scanner);
 
 int main() {
-  Driver driver;
+  ast::Arena arena{};
+  parser::Driver driver{};
 
   parser::location loc;
   loc.begin.line = loc.end.line = 1;
@@ -38,11 +39,11 @@ int main() {
     return 1;
   }
 
-  if (!driver.program) {
+  if (!driver.ast.program()) {
     std::cerr << "no program produced\n";
     return 1;
   }
-  dump_ast(*driver.program);
+  // dump_ast(*driver.program);
 
   // SomeVisitor vit{};
   // Node::dfs_travers(*driver.program, vit);

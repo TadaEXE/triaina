@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "ds/trit.hpp"
-#include "errors.hpp"
+#include "ds/errors.hpp"
 #include "resty.hpp"
 
 namespace ds {
@@ -45,7 +45,8 @@ TriVec::TriVec(const TriMaVec& tmv) {
 }
 
 res::vexpected TriVec::resize_to(size_t len, Trit fill) {
-  if (fixed_) return res::unexpected("Can not resize fixed vector.", DSError::Unknown);
+  if (fixed_)
+    return res::unexpected("Can not resize fixed vector.", DSError::Unknown);
 
   auto cur = length();
   if (cur == len) return {};

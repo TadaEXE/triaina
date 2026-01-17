@@ -35,6 +35,8 @@ class TriVec {
       const std::vector<TriVec>& tvs);
 
   const std::vector<Trit>& data() { return data_; }
+  const auto& at(size_t i) const { return data_.at(i); }
+  const auto& operator[](size_t i) const { return at(i); }
 
   res::vexpected resize_to(size_t len, Trit fill = Trit::Zero);
 
@@ -67,6 +69,8 @@ class TriMaVec {
   bool only_wildcrads() const { return only_wildcrads_; }
 
   const auto& data() const { return data_; }
+  const auto& at(size_t i) const { return data_.at(i); }
+  const auto& operator[](size_t i) const { return at(i); }
 
  private:
   std::vector<TritMatch> data_;
