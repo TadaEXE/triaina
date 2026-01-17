@@ -1,4 +1,5 @@
-func(a:1, b:2) add |out:3| {
+
+func (a:1, b:2) add |out:3| {
   var tmp:3;
   a%b => tmp;
   tmp => out;

@@ -16,10 +16,11 @@ namespace parser {
 class location;
 
 struct Driver {
+  explicit Driver(ast::Ast& ast) : ast(ast) {}
 
   yyscan_t scanner = nullptr;
 
-  ast::Ast ast;
+  ast::Ast& ast;
 
   std::vector<std::string> error_msg;
 

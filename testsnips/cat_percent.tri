@@ -1,2 +1,2 @@
 foo%bar => baz;
-foo[1:2]%bar[:3] => &qux;
+foo[1>2]%bar[<3] => &qux;

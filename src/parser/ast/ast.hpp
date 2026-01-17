@@ -1,8 +1,10 @@
 #pragma once
 
+#include <ostream>
 #include <utility>
 
 #include "parser/ast/arena.hpp"
+#include "parser/ast/dump.hpp"
 #include "parser/ast/nodes.hpp"
 
 namespace ast {
@@ -25,8 +27,10 @@ class Ast {
   const auto& program() const { return program_; }
   const auto& arena() const { return arena_; }
 
+  void dump(std::ostream& os);
+
  private:
-  ast::Arena arena_;
+  Arena arena_;
   std::optional<NodeId<Program>> program_;
 };
 

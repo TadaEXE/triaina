@@ -30,6 +30,7 @@ add_executable(
     src/parser/main.cpp
     src/parser/lex_bridge.cpp
     src/parser/driver.cpp
+    src/parser/ast/ast.cpp
     ${BISON_Parser_OUTPUTS}
     ${FLEX_Lexer_OUTPUTS}
 )
