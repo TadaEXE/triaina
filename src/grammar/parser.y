@@ -813,6 +813,7 @@ var_dec
 
       $$ = std::move(v);
     }
+  ;
 
 chain
   : expr hop_list
