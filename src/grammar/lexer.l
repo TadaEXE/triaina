@@ -93,8 +93,15 @@ NUM     [1-9][0-9]*
 "="   { return Parser::make_EQUALS(LOC); }
 "$"   { return Parser::make_DOLLAR(LOC); }
 
-"var" { return Parser::make_VAR(LOC); }
-"reg" { return Parser::make_REG(LOC); }
+"var"   { return Parser::make_VAR(LOC); }
+"reg"   { return Parser::make_REG(LOC); }
+"func"  { return Parser::make_FUNC(LOC); }
+"gate"  { return Parser::make_GATE(LOC); }
+"if"    { return Parser::make_IF(LOC); }
+"elif"  { return Parser::make_ELIF(LOC); }
+"else"  { return Parser::make_ELSE(LOC); }
+"while" { return Parser::make_WHILE(LOC); }
+"node"  { return Parser::make_NODE(LOC); }
 
 {NUM} { return Parser::make_NUM(std::string(yytext), LOC); }
 {WORD} { return Parser::make_WORD(std::string(yytext), LOC); }

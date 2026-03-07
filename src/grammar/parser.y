@@ -144,8 +144,6 @@
 %type <CellDeclList> cell_decl_list
 %type <ast::CellDecl> cell_decl
 %type <ast::CellOverride> cell_override
-// %type <CellActualList> cell_actual_list
-// %type <ast::CellActual> cell_actual
 
 %type <ast::IfElse> if_else
 %type <IfArmList> if_arm_list
@@ -541,49 +539,6 @@ cell_override
       $$ = std::move(ov);
     }
   ;
-
-// cell_actual_list
-//   : cell_actual
-//     {
-//       CellActualList cal{};
-//       cal.push_back(std::move($1));
-//       $$ = std::move(cal);
-//     }
-//   | cell_actual_list COMMA cell_actual
-//     {
-//       $1.push_back(std::move($3));
-//       $$ = std::move($1);
-//     }
-//   ;
-
-// cell_actual
-//   : AMP WORD
-//     {
-//       ast::CellActual a{
-//         .kind = ast::CellActual::Kind::RegRef,
-//         .reg = {
-//           .text = std::move($2),
-//           .sp = sp(driver, @2),
-//         },
-//         .expr = ExprId{0},
-//         .sp = sp(driver, @$),
-//       };
-//       $$ = std::move(a);
-//     }
-//   | expr
-//     {
-//       ast::CellActual a{
-//         .kind = ast::CellActual::Kind::Expr,
-//         .reg = {
-//           .text = std::string{},
-//           .sp = sp(driver, @$),
-//         },
-//         .expr = $1,
-//         .sp = sp(driver, @$),
-//       };
-//       $$ = std::move(a);
-//     }
-//   ;
 
 if_else
   : IF cguard expr scope if_arm_list
