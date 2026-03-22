@@ -1,6 +1,0 @@
-{
-  reg out:3;
-  foo => bar;
-  var tmp:? = $3;
-  tmp => out;
-}

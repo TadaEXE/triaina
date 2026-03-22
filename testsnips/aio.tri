@@ -1,0 +1,48 @@
+// Input:
+input('a') a_btn; // Listen to stdin for the sequence 'a_' where '_' is +, 0 or -
+
+// Generators:
+clock(`50`, `50`) sys_clk; // 50 ms clock with 50% duty-cycle; P0 => -; P1 => +;
+
+// Output:
+output("Node_Output") node_out; // Will output the name followed by the new value on every change
+
+gate(`2`) or { // max
+    (-, -) >> -;
+    (-, 0) >> 0;
+    (0, -) >> 0;
+    (0, 0) >> 0;
+    (_, _) >> +;
+}
+
+gate(`1`) not { // neg
+    (+) >> -;
+    (0) >> 0;
+    (-) >> +;
+}
+
+node(in in1, in in2, out out1)    // ports
+foo
+with(or or1, or or2) { // not inliable nodes
+    in1 >> inv >> or1.i0; // inlined gate
+    in2 >> or2.i1;
+
+    or1.o1 >> or2.i0;
+    or2.o1 >> or1.i1;
+    // might add unpacking like: |or1.o, or2.o| >> |or2.i0, or1.i1|;
+
+    |or1.o, or2.o| >> or >> out1; // custom bus into inlined gate to output
+}
+
+node(in in1, in in2, out out1)    // ports
+bar {
+  | in1, in2 | >> or >> out1;
+}
+
+bench("mybench") { // bench is started by giving it to the runtime as an argument
+  | a_btn, sys_clk | >> foo >> node_out;
+}
+
+bench("mybench1") { // bench is started by giving it to the runtime as an argument
+  | a_btn, sys_clk | >> foo >> node_out;
+}

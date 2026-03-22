@@ -46,9 +46,9 @@
 %}
 
 WS      [ \t\r\n]+
+COMMENT "//".*$
 WORD    [a-zA-Z_][a-zA-Z_0-9]*
-CHARS   [.]*
-NUM     [1-9][0-9]*
+NUM     [0-9]+
 
 %%
 
@@ -59,53 +59,46 @@ NUM     [1-9][0-9]*
   }
 }
 
+{COMMENT} {
+  if (driver.loc) {
+    ensure_filename(*driver.loc, driver.filename);
+    (void)token_loc(*driver.loc, yytext, yyleng);
+  }
+}
+
+"input"   { return Parser::make_INPUT(LOC); }
+"output"  { return Parser::make_OUTPUT(LOC); }
+"clock"   { return Parser::make_CLOCK(LOC); }
+"in"      { return Parser::make_IN(LOC); }
+"out"     { return Parser::make_OUT(LOC); }
+"gate"    { return Parser::make_GATE(LOC); }
+"node"    { return Parser::make_NODE(LOC); }
+"with"    { return Parser::make_WITH(LOC); }
+"bench"   { return Parser::make_BENCH(LOC); }
+
 "0"   { return Parser::make_ZERO(LOC); }
 "+"   { return Parser::make_PLUS(LOC); }
 "-"   { return Parser::make_MINUS(LOC); }
+"_"   { return Parser::make_UNDER(LOC); }
 
-"=>"  { return Parser::make_ARROW(LOC); }
-"<"   { return Parser::make_LT(LOC); }
-">"   { return Parser::make_GT(LOC); }
-
-"*"   { return Parser::make_STAR(LOC); }
-"&"   { return Parser::make_AMP(LOC); }
-"%"   { return Parser::make_PRCNT(LOC); }
+">>"  { return Parser::make_SHIFT(LOC); }
+"."   { return Parser::make_DOT(LOC);}
 
 "("   { return Parser::make_LPAREN(LOC); }
 ")"   { return Parser::make_RPAREN(LOC); }
 "{"   { return Parser::make_LCURL(LOC); }
 "}"   { return Parser::make_RCURL(LOC); }
-"["   { return Parser::make_LBRACK(LOC); }
-"]"   { return Parser::make_RBRACK(LOC); }
 "|"   { return Parser::make_PIPE(LOC); }
-
-":"   { return Parser::make_COLON(LOC); }
 ";"   { return Parser::make_SEMI(LOC); }
 ","   { return Parser::make_COMMA(LOC); }
-"?"   { return Parser::make_QMARK(LOC); }
-"_"   { return Parser::make_UNDER(LOC); }
 
 "`"   { return Parser::make_BTICK(LOC); }
 "'"   { return Parser::make_SQUOTE(LOC); }
 "\""  { return Parser::make_DQUOTE(LOC); }
 
-"/"   { return Parser::make_SLASH(LOC); }
-"="   { return Parser::make_EQUALS(LOC); }
-"$"   { return Parser::make_DOLLAR(LOC); }
-
-"var"   { return Parser::make_VAR(LOC); }
-"reg"   { return Parser::make_REG(LOC); }
-"func"  { return Parser::make_FUNC(LOC); }
-"gate"  { return Parser::make_GATE(LOC); }
-"if"    { return Parser::make_IF(LOC); }
-"elif"  { return Parser::make_ELIF(LOC); }
-"else"  { return Parser::make_ELSE(LOC); }
-"while" { return Parser::make_WHILE(LOC); }
-"node"  { return Parser::make_NODE(LOC); }
 
 {NUM} { return Parser::make_NUM(std::string(yytext), LOC); }
 {WORD} { return Parser::make_WORD(std::string(yytext), LOC); }
-{CHARS} { return Parser::make_CHARS(std::string(yytext), LOC); }
 <<EOF>> { return Parser::make_END(LOC); }
 
 . {

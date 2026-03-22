@@ -7,9 +7,9 @@
 
 namespace ast {
 
-class Arena {
+class Pool {
  public:
-  using Allowed = std::variant<Expr, SourceSegment, Scope, Program>;
+  using Allowed = std::variant<Gate, Node, Bench>;
 
   template <class T, class... Args>
     requires requires(Allowed a) { std::get<T>(a); }

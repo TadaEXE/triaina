@@ -15,27 +15,82 @@
 
   #include "parser/ast/nodes.hpp"
   #include "parser/driver.hpp"
-
-  using ExprId = ast::NodeId<ast::Expr>;
-  using ScopeId = ast::NodeId<ast::Scope>;
-  using SegId = ast::NodeId<ast::SourceSegment>;
-  using ProgId = ast::NodeId<ast::Program>;
-
-  using SegList = std::vector<SegId>;
-  using HopList = std::vector<ast::ChainHop>;
-  using ExprList = std::vector<ExprId>;
-
-  using ArgList = std::vector<ast::Arg>;
-  using RetList = std::vector<ast::RetItem>;
-  using CellDeclList = std::vector<ast::CellDecl>;
-  // using CellActualList = std::vector<ast::CellActual>;
-  using GateArmList = std::vector<ast::GateArm>;
-  using TritMatchList = std::vector<ast::TritMatch>;
-  using IfArmList = std::vector<ast::IfArm>;
 }
 
 %parse-param { parser::Driver& driver }
 %lex-param   { parser::Driver& driver }
+
+%token <std::string> WORD
+%token <std::string> NUM
+
+%token INPUT "input"
+%token OUTPUT "output"
+%token CLOCK "clock"
+%token IN "in"
+%token OUT "out"
+%token GATE "gate"
+%token NODE "node"
+%token WITH "with"
+%token BENCH "bench"
+
+%token ZERO "0"
+%token PLUS "+"
+%token MINUS "-"
+%token UNDER "_"
+
+%token SHIFT ">>"
+%token DOT "."
+
+%token LPAREN "("
+%token RPAREN ")"
+%token LCURL "{"
+%token RCURL "}"
+%token PIPE "|"
+%token SEMI ";"
+%token COMMA ","
+
+%token BTICK "`"
+%token SQUOTE "'"
+%token DQUOTE "\""
+
+%token ERROR
+%token END 0
+
+%type <char> trit trit_match
+%type <ast::StringLiteral> string_literal
+%type <ast::DecimalLiteral> decimal_literal
+%type <ast::CharLiteral> char_literal
+
+%type <ast::Expression> expr
+%type <ast::Bus> bus
+%type <ast::Qualified> qualified
+%type <std::vector<ast::Expression>> expr_list
+%type <std::variant<std::string, ast::Qualified, ast::Bus, ast::TritLiteral>> primary
+
+%type <std::vector<ast::Expression>> chain_tail
+%type <ast::Chain> chain
+%type <std::vector<ast::Chain>> chain_list
+%type <ast::Bench> bench_def
+
+%type <ast::Inst> inst
+%type <std::vector<ast::Inst>> inst_list
+%type <std::optional<ast::With>> opt_with
+%type <ast::Port> port
+%type <std::vector<ast::Port>> port_list
+%type <ast::Node> node_def
+
+%type <std::vector<ast::TritMatch>> trit_match_list
+%type <ast::GateArm> gate_arm
+%type <std::vector<ast::GateArm>> gate_arm_list
+%type <ast::Gate> gate_def
+
+%type <ast::Input> input_decl
+%type <ast::Output> output_decl
+%type <ast::Clock> clock_decl
+
+%type <ast::Item> item
+%type <std::vector<ast::Item>> item_list
+// %type <ast::Program> program
 
 %code {
   parser::Parser::symbol_type yylex(parser::Driver& driver);
@@ -48,998 +103,311 @@
     return static_cast<uint32_t>(std::stoul(s));
   }
 
-  static inline size_t to_st(const std::string& s) {
+  static inline size_t to_size(const std::string& s) {
     return static_cast<size_t>(std::stoull(s));
   }
 
   static inline int64_t to_i64(const std::string& s) {
     return static_cast<int64_t>(std::stoll(s));
   }
-
-  static inline ast::Trit to_trit(char c) {
-    if (c == '+') return ast::Trit::Plus;
-    if (c == '-') return ast::Trit::Minus;
-    return ast::Trit::Zero;
-  }
-
-  static inline ast::TritMatch to_trit_match(char c) {
-    if (c == '+') return ast::TritMatch::Plus;
-    if (c == '-') return ast::TritMatch::Minus;
-    if (c == '0') return ast::TritMatch::Zero;
-    return ast::TritMatch::Wild;
-  }
 }
 
-%token <std::string> WORD
-%token <std::string> NUM
-%token <std::string> CHARS
-
-%token ZERO "0"
-%token PLUS "+"
-%token MINUS "-"
-
-%token ARROW "=>"
-%token LT "<"
-%token GT ">"
-
-%token STAR "*"
-%token AMP "&"
-%token PRCNT "%"
-
-%token LPAREN "("
-%token RPAREN ")"
-%token LCURL "{"
-%token RCURL "}"
-%token LBRACK "["
-%token RBRACK "]"
-%token PIPE "|"
-
-%token COLON ":"
-%token SEMI ";"
-%token COMMA ","
-%token QMARK "?"
-%token UNDER "_"
-
-%token BTICK "`"
-%token SQUOTE "'"
-%token DQUOTE "\""
-
-%token SLASH "/"
-%token EQUALS "="
-%token DOLLAR "$"
-
-%token FUNC "func"
-%token VAR "var"
-%token REG "reg"
-%token GATE "gate"
-%token IF "if"
-%token ELIF "elif"
-%token ELSE "else"
-%token WHILE "while"
-%token NODE "node"
-
-%token ERROR
-%token END 0
-
-%type <ProgId> program
-
-%type <SegList> source_segment_list
-%type <SegId> source_segment statement
-%type <ScopeId> scope
-
-%type <ast::GateDef> gate_def
-%type <GateArmList> gate_body
-%type <ast::GateArm> gate_arm
-%type <TritMatchList> trit_match_list
-%type <char> trit_match
-
-%type <ast::FuncDef> func_def
-%type <ast::Lambda> lambda
-%type <ArgList> arg_list arg_list_items
-%type <ast::Arg> arg
-%type <RetList> ret_list ret_list_items
-%type <ast::RetItem> ret_item
-
-%type <ast::CellSet> cell_set
-%type <CellDeclList> cell_decl_list
-%type <ast::CellDecl> cell_decl
-%type <ast::CellOverride> cell_override
-
-%type <ast::IfElse> if_else
-%type <IfArmList> if_arm_list
-%type <ast::IfArm> if_arm
-%type <ast::WhileLoop> while_loop
-%type <ast::CGuard> cguard
-
-%type <ast::RegDec> reg_dec
-%type <ast::VarDec> var_dec
-%type <ast::SizeSpec> size_spec
-
-%type <ast::Chain> chain
-%type <HopList> hop_list
-%type <ast::ChainHop> hop
-
-%type <ExprId> expr cat braccess
-%type <ast::MemOp> mem_op
-%type <ast::Atom> atom
-%type <ast::BusRef> bus_ref
-%type <ast::List> list
-%type <ExprList> expr_list
-%type <ast::Decimal> decimal
-%type <ast::CharLit> char_lit
-%type <ast::Literal> literal
-
-%type <char> trit
-%type <std::string> trit_seq rnum opt_rnum
-%type <int8_t> slice_dir
-
-%left ELSE
 %%
 
+/* STRUCTURE */
 program
-  : source_segment_list END
+  : item_list END
     {
-      ast::Program p{
-        .segments = std::move($1),
+      ast::Program prog {
         .sp = sp(driver, @$),
+        .item_list = std::move($1),
       };
 
-      auto pid = driver.ast.make_id<ast::Program>(std::move(p));
-      driver.set_program(pid);
-      $$ = pid;
+      driver.ast.set_program(std::move(prog));
+      // $$ = driver.ast.program;
     }
   ;
 
-source_segment_list
-  : { $$ = SegList{}; }
-  | source_segment_list source_segment
+item_list
+  : /* empty */ { $$ = {}; }
+  | item_list item
     {
       $1.push_back($2);
       $$ = std::move($1);
     }
   ;
 
-source_segment
-  : scope
+item
+  : input_decl { $$ = ast::Item{sp(driver, @$), $1}; }
+  | output_decl { $$ = ast::Item{sp(driver, @$), $1}; }
+  | clock_decl { $$ = ast::Item{sp(driver, @$), $1}; }
+  | gate_def { $$ = ast::Item{sp(driver, @$), $1}; }
+  | node_def { $$ = ast::Item{sp(driver, @$), $1}; }
+  | bench_def { $$ = ast::Item{sp(driver, @$), $1}; }
+  | error SEMI
     {
-      ast::SourceSegment s{
-        .inner = driver.ast.get($1),
-        .sp = sp(driver, @$),
-      };
-      $$ = driver.ast.make_id<ast::SourceSegment>(std::move(s));
+      // driver.on_error(@$.begin.line, @$.begin.column,
+      //                 "invalid top-level item");
+      yyerrok;
     }
-  | gate_def
-    {
-      ast::SourceSegment seg{
-        .inner = std::move($1),
-        .sp = sp(driver, @$),
-      };
-      $$ = driver.ast.make_id<ast::SourceSegment>(std::move(seg));
-    }
-  | func_def
-    {
-      ast::SourceSegment seg{
-        .inner = std::move($1),
-        .sp = sp(driver, @$),
-      };
-      $$ = driver.ast.make_id<ast::SourceSegment>(std::move(seg));
-    }
-  | if_else
-    {
-      ast::SourceSegment seg{
-        .inner = std::move($1),
-        .sp = sp(driver, @$),
-      };
-      $$ = driver.ast.make_id<ast::SourceSegment>(std::move(seg));
-    }
-  | while_loop
-    {
-      ast::SourceSegment seg{
-        .inner = std::move($1),
-        .sp = sp(driver, @$),
-      };
-      $$ = driver.ast.make_id<ast::SourceSegment>(std::move(seg));
-    }
-  | statement { $$ = $1; }
+  
   ;
 
-scope
-  : LCURL source_segment_list RCURL
+/* IGO */
+input_decl
+  : INPUT LPAREN char_literal RPAREN WORD SEMI
     {
-      ast::Scope s{
-        .segments = std::move($2),
+      $$ = ast::Input {
         .sp = sp(driver, @$),
+        .trigger = std::move($3),
+        .identifier = std::move($5),
       };
-      $$ = driver.ast.make_id<ast::Scope>(std::move(s));
     }
   ;
+
+output_decl
+  : OUTPUT LPAREN string_literal RPAREN WORD SEMI
+    {
+      $$ = ast::Output {
+        .sp = sp(driver, @$),
+        .name = std::move($3),
+        .identifier = std::move($5),
+      };
+    }
+  ;
+
+clock_decl
+  : CLOCK LPAREN decimal_literal COMMA decimal_literal RPAREN WORD SEMI
+    {
+      $$ = ast::Clock {
+        .sp = sp(driver, @$),
+        .cycle_ms = std::move($3),
+        .duty_cycle = std::move($5),
+        .identifier = std::move($7),
+      };
+    }
+  ;
+
+/* GATE */
 
 gate_def
-  : GATE LPAREN NUM RPAREN WORD LCURL gate_body RCURL
+  : GATE LPAREN decimal_literal RPAREN WORD LCURL gate_arm_list RCURL
     {
-      ast::GateDef g{
-        .arity = to_st($3),
-        .name = {
-          .text = std::move($5),
-          .sp = sp(driver, @5),
-        },
-        .arms = std::move($7),
+      $$ = ast::Gate {
         .sp = sp(driver, @$),
+        .width = std::move($3),
+        .identifier = std::move($5),
+        .gate_arm_list = std::move($7),
       };
-      $$ = std::move(g);
     }
   ;
 
-gate_body
-  : gate_arm
+gate_arm_list
+  : gate_arm { $$ = std::vector<ast::GateArm>{$1}; }
+  | gate_arm_list gate_arm
     {
-      GateArmList gal{};
-      gal.push_back(std::move($1));
-      $$ = std::move(gal);
-    }
-  | gate_body gate_arm
-    {
-      $1.push_back(std::move($2));
+      $1.push_back($2); 
       $$ = std::move($1);
     }
   ;
 
 gate_arm
-  : LPAREN trit_match_list RPAREN ARROW trit SEMI
+  : LPAREN trit_match_list RPAREN SHIFT trit SEMI
     {
-      ast::GateArm a{
-        .pattern = std::move($2),
-        .result = to_trit($5),
+      $$ = ast::GateArm {
         .sp = sp(driver, @$),
+        .trit_match_list = std::move($2),
+        .result = ast::TritLiteral { 
+          .sp = sp(driver, @5),
+          .trit = ast::char_to_trit($5),
+        },
       };
-      $$ = std::move(a);
     }
   ;
 
 trit_match_list
-  : trit_match
-    {
-      TritMatchList tml{};
-      tml.push_back(to_trit_match($1));
-      $$ = std::move(tml);
-    }
+  : trit_match { $$ = std::vector<ast::TritMatch>{ast::char_to_trit_match($1)}; }
   | trit_match_list COMMA trit_match
     {
-      $1.push_back(to_trit_match($3));
+      $1.push_back(ast::char_to_trit_match($3));
       $$ = std::move($1);
     }
   ;
 
 trit_match
-  : trit { $$ = $1; }
+  : trit { $$ = std::move($1); }
   | UNDER { $$ = '_'; }
   ;
 
-func_def
-  : FUNC arg_list WORD ret_list scope
+/* NODE */
+
+node_def
+  : NODE LPAREN port_list RPAREN WORD opt_with LCURL chain_list RCURL
     {
-      ast::FuncDef f{
-        .name = {
-          .text = std::move($3),
-          .sp = sp(driver, @3),
-        },
-        .args = std::move($2),
-        .cells = std::nullopt,
-        .rets = std::move($4),
-        .body = $5,
+      $$ = ast::Node {
         .sp = sp(driver, @$),
+        .port_list = std::move($3),
+        .identifier = std::move($5),
+        .opt_with = std::move($6),
+        .chain_list = std::move($8),
       };
-      $$ = std::move(f);
-    }
-  | FUNC arg_list cell_set WORD ret_list scope
-    {
-      ast::FuncDef f{
-        .name = {
-          .text = std::move($4),
-          .sp = sp(driver, @4),
-        },
-        .args = std::move($2),
-        .cells = std::move($3),
-        .rets = std::move($5),
-        .body = $6,
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(f);
     }
   ;
 
-lambda
-  : FUNC arg_list ret_list scope
+port_list
+  : port { $$ = std::vector<ast::Port>{$1}; }
+  | port_list COMMA port
     {
-      ast::Lambda l{
-        .args = std::move($2),
-        .cells = std::nullopt,
-        .rets = std::move($3),
-        .body = $4,
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(l);
-    }
-  | FUNC arg_list cell_set ret_list scope
-    {
-      ast::Lambda l{
-        .args = std::move($2),
-        .cells = std::move($3),
-        .rets = std::move($4),
-        .body = $5,
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(l);
-    }
-  ;
-
-arg_list
-  : LPAREN RPAREN { $$ = ArgList{}; }
-  | LPAREN arg_list_items RPAREN { $$ = std::move($2); }
-  ;
-
-arg_list_items
-  : arg
-    {
-      ArgList al{};
-      al.push_back(std::move($1));
-      $$ = std::move(al);
-    }
-  | arg_list_items COMMA arg
-    {
-      $1.push_back(std::move($3));
+      $1.push_back($3);
       $$ = std::move($1);
     }
   ;
 
-arg
-  : WORD COLON size_spec
+port
+  : IN WORD
     {
-      ast::Arg a{
-        .name = {
-          .text = std::move($1),
-          .sp = sp(driver, @$),
-        },
-        .width = std::move($3),
-        .def = std::nullopt,
+      $$ = ast::Port {
         .sp = sp(driver, @$),
+        .type = ast::PortType::In,
+        .identifier = std::move($2),
       };
-      $$ = std::move(a);
     }
-  | WORD COLON size_spec EQUALS expr
+  | OUT WORD
     {
-      ast::Arg a{
-        .name = {
-          .text = std::move($1),
-          .sp = sp(driver, @$),
-        },
-        .width = std::move($3),
-        .def = $5,
+      $$ = ast::Port {
         .sp = sp(driver, @$),
+        .type = ast::PortType::Out,
+        .identifier = std::move($2),
       };
-      $$ = std::move(a);
     }
   ;
 
-ret_list
-  : PIPE PIPE { $$ = RetList{}; }
-  | PIPE ret_list_items PIPE { $$ = std::move($2); }
+opt_with
+  : /* empty */ { $$ = std::nullopt; }
+  | WITH LPAREN inst_list RPAREN
+    {
+      $$ = ast::With {
+        .sp = sp(driver, @$),
+        .inst_list = std::move($3),
+      };
+    }
   ;
 
-ret_list_items
-  : ret_item
+inst_list
+  : inst { $$ = std::vector<ast::Inst>{$1}; }
+  | inst_list COMMA inst
     {
-      RetList rl{};
-      rl.push_back(std::move($1));
-      $$ = std::move(rl);
-    }
-  | ret_list_items COMMA ret_item
-    {
-      $1.push_back(std::move($3));
+      $1.push_back($3);
       $$ = std::move($1);
     }
   ;
 
-ret_item
-  : WORD COLON size_spec
+inst
+  : WORD WORD
     {
-      ast::RetNamed rn{
-        .name = {
-          .text = std::move($1),
-          .sp = sp(driver, @1),
-        },
-        .width = std::move($3),
+      $$ = ast::Inst {
         .sp = sp(driver, @$),
+        .type = std::move($1),
+        .identifier = std::move($2),
       };
-      $$ = ast::RetItem{std::move(rn)};
-    }
-  | expr
-    {
-      ast::RetExpr re{
-        .expr = $1,
-        .sp = sp(driver, @$),
-      };
-      $$ = ast::RetItem{std::move(re)};
     }
   ;
 
-cell_set
-  : SLASH cell_decl_list SLASH
+/* CONNECTION */
+
+bench_def
+  : BENCH LPAREN string_literal RPAREN LCURL chain_list RCURL
     {
-      ast::CellSet cs{
-        .decls = std::move($2),
+      $$ = ast::Bench {
         .sp = sp(driver, @$),
+        .name = std::move($3),
+        .con_list = std::move($6),
       };
-      $$ = std::move(cs);
     }
   ;
 
-cell_decl_list
-  : cell_decl
+
+chain_list
+  : /* empty */ { $$ = {}; }
+  | chain_list chain
     {
-      CellDeclList cdl{};
-      cdl.push_back(std::move($1));
-      $$ = std::move(cdl);
-    }
-  | cell_decl_list COMMA cell_decl
-    {
-      $1.push_back(std::move($3));
+      $1.push_back($2);
       $$ = std::move($1);
-    }
-  ;
-
-cell_decl
-  : AMP WORD COLON size_spec
-    {
-      ast::CellDeclReg r{
-        .reg = {
-          .text = std::move($2),
-          .sp = sp(driver, @2),
-        },
-        .width = std::move($4),
-        .sp = sp(driver, @$),
-      };
-      $$ = ast::CellDecl{std::move(r)};
-    }
-  | WORD COLON size_spec
-    {
-      ast::CellDeclCell c{
-        .name = {
-          .text = std::move($1),
-          .sp = sp(driver, @1),
-        },
-        .width = std::move($3),
-        .def = std::nullopt,
-        .sp = sp(driver, @$),
-      };
-      $$ = ast::CellDecl{std::move(c)};
-    }
-  | WORD COLON size_spec EQUALS expr
-    {
-      ast::CellDeclCell c{
-        .name = {
-          .text = std::move($1),
-          .sp = sp(driver, @1),
-        },
-        .width = std::move($3),
-        .def = $5,
-        .sp = sp(driver, @$),
-      };
-      $$ = ast::CellDecl{std::move(c)};
-    }
-  ;
-
-cell_override
-  : EQUALS SLASH expr_list SLASH GT
-    {
-      ast::CellOverride ov{
-        .actuals = std::move($3),
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(ov);
-    }
-  ;
-
-if_else
-  : IF cguard expr scope if_arm_list
-    {
-      ast::IfElse ie{
-        .guard = std::move($2),
-        .cond = $3,
-        .then_scope = $4,
-        .arms = std::move($5),
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(ie);
-    }
-  | IF cguard expr scope
-    {
-      ast::IfElse ie{
-        .guard = std::move($2),
-        .cond = $3,
-        .then_scope = $4,
-        .arms = std::nullopt,
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(ie);
-    }
-  ;
-
-if_arm_list
-  : if_arm
-    {
-      IfArmList ial{};
-      ial.push_back(std::move($1));
-      $$ = std::move(ial);
-    }
-  | if_arm_list if_arm
-    {
-      $1.push_back(std::move($2));
-      $$ = std::move($1);
-    }
-  ;
-
-if_arm
-  : ELIF cguard expr scope
-    {
-      ast::IfArm a{
-        .kind = ast::IfArm::Kind::Elif,
-        .guard = std::move($2),
-        .cond = $3,
-        .scope = $4,
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(a);
-    }
-  | ELSE cguard scope
-    {
-      ast::IfArm a{
-        .kind = ast::IfArm::Kind::Else,
-        .guard = std::move($2),
-        .cond = std::nullopt,
-        .scope = $3,
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(a);
-    }
-  ;
-
-while_loop
-  : WHILE cguard expr scope
-    {
-      ast::WhileLoop wl{
-        .guard = std::move($2),
-        .cond = $3,
-        .scope = $4,
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(wl);
-    }
-  ;
-
-cguard
-  : LT trit GT
-    {
-      ast::CGuard g{
-        .a = to_trit($2),
-        .b = std::nullopt,
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(g);
-    }
-  | LT trit COMMA trit GT
-    {
-      ast::CGuard g{
-        .a = to_trit($2),
-        .b = to_trit($4),
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(g);
-    }
-  ;
-
-size_spec
-  : NUM
-    {
-      ast::SizeSpec sz{
-        .is_dynamic = false,
-        .fixed = to_st($1),
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(sz);
-    }
-  | QMARK
-    {
-      ast::SizeSpec sz{
-        .is_dynamic = true,
-        .fixed = 0,
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(sz);
-    }
-  ;
-
-statement
-  : chain SEMI
-    {
-      ast::Statement st{
-        .inner = std::move($1),
-        .sp = sp(driver, @$),
-      };
-
-      ast::SourceSegment seg {
-        .inner = std::move(st),
-        .sp = sp(driver, @$),
-      };
-
-      $$ = driver.ast.make_id<ast::SourceSegment>(std::move(seg));
-    }
-  | reg_dec SEMI
-    {
-      ast::Statement st{
-        .inner = std::move($1),
-        .sp = sp(driver, @$),
-      };
-
-      ast::SourceSegment seg {
-        .inner = std::move(st),
-        .sp = sp(driver, @$),
-      };
-
-      $$ = driver.ast.make_id<ast::SourceSegment>(std::move(seg));
-    }
-  | var_dec SEMI
-    {
-      ast::Statement st{
-        .inner = std::move($1),
-        .sp = sp(driver, @$),
-      };
-
-      ast::SourceSegment seg {
-        .inner = std::move(st),
-        .sp = sp(driver, @$),
-      };
-
-      $$ = driver.ast.make_id<ast::SourceSegment>(std::move(seg));
-    }
-  | error SEMI
-    {
-      driver.on_error((int)@1.begin.line, (int)@1.begin.column, "invalid statement");
-      yyerrok;
-
-      ast::Statement st{
-        .inner = ast::Chain{},
-        .sp = sp(driver, @$),
-      };
-
-      ast::SourceSegment seg{
-        .inner = std::move(st),
-        .sp = sp(driver, @$),
-      };
-
-      $$ = driver.ast.make_id<ast::SourceSegment>(std::move(seg));
-    }
-  | ERROR SEMI
-    {
-      driver.on_error((int)@1.begin.line, (int)@1.begin.column, "invalid statement");
-      yyerrok;
-
-      ast::Statement st{
-        .inner = ast::Chain{},
-        .sp = sp(driver, @$),
-      };
-
-      ast::SourceSegment seg{
-        .inner = std::move(st),
-        .sp = sp(driver, @$),
-      };
-
-      $$ = driver.ast.make_id<ast::SourceSegment>(std::move(seg));
-    }
-  ;
-
-reg_dec
-  : REG WORD COLON NUM
-    {
-      ast::RegDec r{
-        .name = {
-          .text = std::move($2),
-          .sp = sp(driver, @2),
-        },
-        .width = to_st($4),
-        .sp = sp(driver, @$),
-      };
-
-      $$ = std::move(r);
-    }
-  ;
-
-var_dec
-  : VAR WORD COLON size_spec
-    {
-      ast::VarDec v{
-        .name = {
-          .text = std::move($2),
-          .sp = sp(driver, @2),
-        },
-        .width = std::move($4),
-        .sp = sp(driver, @$),
-      };
-
-      $$ = std::move(v);
     }
   ;
 
 chain
-  : expr hop_list
+  : expr chain_tail SEMI
     {
-      ast::Chain c{
-        .start = $1,
-        .hops = std::move($2),
-        .sp = sp(driver, @$),
-      };
+      std::vector<ast::Expression> elems { $1 };
+      elems.append_range($2);
 
-      $$ = std::move(c);
+      $$ = ast::Chain {
+        .sp = sp(driver, @$),
+        .elements = std::move(elems),
+      };
     }
   ;
 
-hop_list
-  : hop
+chain_tail
+  : SHIFT expr { $$ = std::vector<ast::Expression> { $2 }; }
+  | chain_tail SHIFT expr
     {
-      HopList hs{};
-      hs.push_back(std::move($1));
-      $$ = std::move(hs);
-    }
-  | hop_list hop
-    {
-      $1.push_back(std::move($2));
+      $1.push_back($3);
       $$ = std::move($1);
     }
   ;
 
-hop
-  : ARROW expr
-    {
-      ast::ChainHop h{
-        .ovrd = std::nullopt,
-        .expr = $2,
-        .sp = sp(driver, @$),
-      };
-
-      $$ = std::move(h);
-    }
-  | cell_override expr
-    {
-      ast::ChainHop h{
-        .ovrd = std::move($1),
-        .expr = $2,
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(h);
-    }
-  | ARROW error
-    {
-      driver.on_error((int)@2.begin.line, (int)@2.begin.column, "invalid chain member");
-      yyerrok;
-
-      ast::Literal l{
-        .trits = "",
-        .sp = sp(driver, @2),
-      };
-      
-      ast::MemOp m{
-        .op = ast::MemOpKind::None,
-        .atom = ast::Atom{std::move(l)},
-        .sp = sp(driver, @2),
-      };
-
-      ast::Braccess br{
-        .base = std::move(m),
-        .slice = std::nullopt,
-        .sp = sp(driver, @2),
-      };
-
-      ast::Expr e{
-        .cat = {
-          .left = std::move(br),
-          .right = std::nullopt,
-          .sp = sp(driver, @2),
-        },
-        .sp = sp(driver, @2),
-      };
-
-      auto eid = driver.ast.make_id<ast::Expr>(std::move(e));
-
-      ast::ChainHop h{
-        .ovrd = std::nullopt,
-        .expr = eid,
-        .sp = sp(driver, @$),
-      };
-
-      $$ = std::move(h);
-    }
-  ;
+/* EXPRESSION */
 
 expr
-  : cat { $$ = $1; }
-  ;
-
-cat
-  : braccess { $$ = $1; }
-  | cat PRCNT braccess
+  : primary
     {
-      const auto& l = driver.ast.get($1);
-      const auto& r = driver.ast.get($3);
-
-      ast::Expr e{
-        .cat = {
-          .left = l.cat.left,
-          .right = r.cat.left,
-          .sp = sp(driver, @$),
-        },
+      $$ = ast::Expression {
         .sp = sp(driver, @$),
+        .primary = std::move($1),
       };
-
-      $$ = driver.ast.make_id<ast::Expr>(std::move(e));
     }
   ;
 
-braccess
-  : mem_op 
+primary
+  : WORD { $$ = std::move($1); }
+  | qualified { $$ = std::move($1); }
+  | bus { $$ = std::move($1); }
+  | trit
     {
-      ast::Braccess br{
-        .base = std::move($1),
-        .slice = std::nullopt,
-        .sp = sp(driver, @$),
+      $$ = ast::TritLiteral {
+        .sp = sp(driver, @1),
+        .trit = ast::char_to_trit($1),
       };
-
-      ast::Expr e{
-        .cat = {
-          .left = std::move(br),
-          .right = std::nullopt,
-          .sp = sp(driver, @$),
-        },
-        .sp = sp(driver, @$),
-      };
-
-      $$ = driver.ast.make_id<ast::Expr>(std::move(e));
-    }
-  | mem_op LBRACK opt_rnum slice_dir opt_rnum RBRACK
-    {
-      ast::Slice sl{};
-      if (!$3.empty()) sl.lo = to_i64($3);
-      if (!$5.empty()) sl.hi = to_i64($5);
-      sl.dir = ($4 > 0) ? ast::SliceDir::Forward : ast::SliceDir::Backward;
-      sl.sp = sp(driver, @$);
-
-      ast::Braccess br{
-        .base = std::move($1),
-        .slice = std::move(sl),
-        .sp = sp(driver, @$),
-      };
-
-      ast::Expr e{
-        .cat = {
-          .left = std::move(br),
-          .right = std::nullopt,
-          .sp = sp(driver, @$),
-        },
-        .sp = sp(driver, @$),
-      };
-
-      $$ = driver.ast.make_id<ast::Expr>(std::move(e));
     }
   ;
 
-slice_dir
-  : GT { $$ = 1; }
-  | LT { $$ = -1; }
-  ;
-
-opt_rnum
-  : /* empty */ { $$ = std::string{}; }
-  | rnum { $$ = std::move($1); }
-  | NUM { $$ = std::move($1); }
-  ;
-
-rnum
-  : MINUS ZERO NUM { $$ = "-" + std::move($3); }
-  | MINUS NUM { $$ = "-" + std::move($2); }
-  | ZERO NUM { $$ = std::move($2); }
-  | ZERO { $$ = "0"; }
-  ;
-
-mem_op
-  : atom
+qualified
+  : WORD DOT WORD
     {
-      ast::MemOp m{
-        .op = ast::MemOpKind::None,
-        .atom = std::move($1),
+      $$ = ast::Qualified {
         .sp = sp(driver, @$),
+        .node = std::move($1),
+        .property = std::move($3),
       };
-      $$ = std::move(m);
-    }
-  | STAR atom
-    {
-      ast::MemOp m{
-        .op = ast::MemOpKind::WaitForChange,
-        .atom = std::move($2),
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(m);
-    }
-  | AMP atom
-    {
-      ast::MemOp m{
-        .op = ast::MemOpKind::Direct,
-        .atom = std::move($2),
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(m);
     }
   ;
 
-atom
-  : LPAREN expr RPAREN
-    {
-      ast::AtomParen p{
-        .expr = $2,
-        .sp = sp(driver, @$),
-      };
-      $$ = ast::Atom{std::move(p)};
-    }
-  | list { $$ = ast::Atom{std::move($1)}; }
-  | lambda { $$ = ast::Atom{std::move($1)}; }
-  | bus_ref { $$ = ast::Atom{std::move($1)}; }
-  | WORD
-    {
-        ast::Word w{
-          .text = std::move($1),
-          .sp = sp(driver, @1),
-        };
-      $$ = ast::Atom{std::move(w)};
-    }
-  | char_lit { $$ = ast::Atom{std::move($1)}; }
-  | decimal { $$ = ast::Atom{std::move($1)}; }
-  | literal { $$ = ast::Atom{std::move($1)}; }
-  ;
-
-bus_ref
-  : DOLLAR ZERO
-    {
-      ast::BusRef br{
-        .idx = 0,
-        .sp = sp(driver, @$)
-      };
-      $$ = std::move(br);
-    }
-  | DOLLAR NUM
-    {
-      ast::BusRef br{
-        .idx = to_st($2),
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(br);
-    }
-  ;
-
-list
+bus
   : PIPE expr_list PIPE
     {
-      ast::List l{
-        .elems = std::move($2),
+      $$ = ast::Bus {
         .sp = sp(driver, @$),
+        .expression_list = std::move($2),
       };
-      $$ = std::move(l);
     }
   ;
 
 expr_list
   : expr
     {
-      ExprList xl{};
-      xl.push_back($1);
-      $$ = std::move(xl);
+      $$ = std::vector<ast::Expression> { $1 };
     }
   | expr_list COMMA expr
     {
@@ -1048,71 +416,49 @@ expr_list
     }
   ;
 
-decimal
-  : BTICK opt_rnum BTICK
-    {
-      ast::Decimal d{
-        .value = {
-          .v = to_i64($2),
-          .sp = sp(driver, @2),
-        },
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(d);
-    }
-  ;
-
-char_lit
-  : SQUOTE CHARS SQUOTE
-    {
-      ast::CharLit cl{
-        .chars = std::move($2),
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(cl);
-    }
-  | SQUOTE WORD SQUOTE
-    {
-      ast::CharLit cl{
-        .chars = std::move($2),
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(cl);
-    }
-  | SQUOTE opt_rnum SQUOTE
-    {
-      ast::CharLit cl{
-        .chars = std::move($2),
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(cl);
-    }
-  ;
-
-literal
-  : trit_seq
-    {
-      ast::Literal l{
-        .trits = std::move($1),
-        .sp = sp(driver, @$),
-      };
-      $$ = std::move(l);
-    }
-  ;
-
-trit_seq
-  : trit { $$ = std::string{1, $1}; }
-  | trit_seq trit
-    {
-      $1.push_back($2);
-      $$ = std::move($1);
-    }
-  ;
-
 trit
   : PLUS { $$ = '+'; }
   | ZERO { $$ = '0'; }
   | MINUS { $$ = '-'; }
+  ;
+
+/* LITERALS */
+
+char_literal
+  : SQUOTE WORD SQUOTE
+    {
+      $$ = ast::CharLiteral {
+        .sp = sp(driver, @$),
+        .c = $2[0],
+      };
+    }
+  ;
+
+decimal_literal
+  : BTICK NUM BTICK
+    {
+      $$ = ast::DecimalLiteral {
+        .sp = sp(driver, @$),
+        .dec = to_i64($2),
+      };
+    }
+  | BTICK MINUS NUM BTICK
+    {
+      $$ = ast::DecimalLiteral {
+        .sp = sp(driver, @$),
+        .dec = to_i64($3) * -1,
+      };
+    }
+  ;
+
+string_literal
+  : DQUOTE WORD DQUOTE
+    {
+      $$ = ast::StringLiteral {
+        .sp = sp(driver, @$),
+        .str = std::move($2),
+      };
+    }
   ;
 
 %%

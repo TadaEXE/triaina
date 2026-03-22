@@ -7,7 +7,7 @@ namespace parser {
 
 bool Driver::had_error() const { return !error_msg.empty(); }
 
-void Driver::set_program(ast::NodeId<ast::Program> p) { ast.set_program(p); }
+void Driver::set_program(ast::Program p) { ast.set_program(p); }
 
 void Driver::set_filename(std::string&& fn) {
   filename = std::move(fn);

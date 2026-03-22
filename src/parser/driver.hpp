@@ -3,7 +3,6 @@
 #include <unordered_map>
 
 #include "ast/ast.hpp"
-#include "parser/ast/arena.hpp"
 #include "parser/ast/nodes.hpp"
 
 #ifndef YY_TYPEDEF_YY_SCANNER_T
@@ -30,7 +29,7 @@ struct Driver {
   std::unordered_map<std::string, size_t> file_ids;
 
   bool had_error() const;
-  void set_program(ast::NodeId<ast::Program> p);
+  void set_program(ast::Program p);
   void set_filename(std::string&& fn);
 
   size_t file_id_for(const std::string_view& fn);

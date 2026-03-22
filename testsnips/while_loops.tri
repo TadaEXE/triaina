@@ -1,8 +1,0 @@
-while<+> foo {
-  foo => foo;
-}
-
-while<0,-> |foo,$0| {
-  var t:? = +0-;
-  t => foo;
-}

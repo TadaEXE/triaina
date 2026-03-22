@@ -7,14 +7,12 @@
 namespace ast {
 
 void Ast::dump(std::ostream& os) {
-  Dumper dumper{arena_, os};
+  Dumper dumper{os};
   if (!program_) {
-    os << "No program in this ast, dumping " << arena_.size()
-       << " existing nodes." << std::endl;
-    dumper.dump_arena();
+    os << "No program in this ast\n";
     return;
   }
-  dumper.dump_program(*program_);
+  dumper.dump(*program_);
 }
 
 }  // namespace ast

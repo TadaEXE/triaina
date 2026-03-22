@@ -21,7 +21,7 @@
 
 Ternary logic is the same as binary logic, but using a base 3 system. Balanced refers to the representation of the values. Binary is easy, we have 0 and 1, but with ternary we can go two main ways: unbalanced = {0, 1, 2} and balanced = {-1, 0, +1}. I choose to go only with the balanced system, because of purely subjective philosophical preferences.
 This opens up an insane amount of possibilities!(and ambiguity which I'll dive into later) With the binary system you have 2^2 = 4 fields in the truth table and there for 2^4 = 16 possible combinations, meaning 16 different logic gates. The ternary system however... oh boy. Mind that we limit this to two inputs, which results in 3^2 = 9 fields for the truth table and 3^9 = 19,683 possible logic gates.
-
+  
 ### Trits, Tibbles and Tryts
 
 Eventhough Triaina works with trit vectors of arbitrary lengths, I will quickly go over the termenology we have when working with base 3 values.
