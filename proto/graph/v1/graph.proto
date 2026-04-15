@@ -1,0 +1,26 @@
+edition = "2023";
+
+package triaina.graph.v1;
+
+message Graph {
+  uint64 version = 1;
+  repeated Node nodes = 2;
+  repeated Edge edges = 3;
+  string name = 4;
+
+  message Node {
+    uint32 id = 1;
+    string name = 2;
+    NodeKind kind = 3;
+  }
+
+  message Edge {
+    uint32 id = 1;
+    Node from = 2;
+    Node to = 3;
+  }
+
+  enum NodeKind {
+    NODE_KIND_UNSPECIFIED = 0;
+  }
+}

@@ -159,7 +159,6 @@ struct Gate {
 };
 
 /* IGO */
-
 struct Input {
   Span sp;
   CharLiteral trigger;

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <array>
 
 #include "ds/gate.hpp"
 #include "ds/trit.hpp"
@@ -17,6 +18,7 @@ enum class BarError : uint8_t {
   Three = 3,
   Four = 4,
 };
+
 
 int main(int argc, char* argv[]) {
   // std::vector<ds::GateArm> arms = {{{"++"}, ds::Trit::Minus},
