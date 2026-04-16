@@ -6,7 +6,7 @@ input('a') a_btn; // Listen to stdin for the sequence 'a_' where '_' is +, 0 or 
 clock(`50`, `50`) sys_clk; // 50 ms clock with 50% duty-cycle; P0 => -; P1 => +;
 
 // Output:
-output("Node Output") node_out; // Will output the name followed by the new value on every change
+output("Block Output") block_out; // Will output the name followed by the new value on every change
 
 gate(`2`) or { // max
     (-, -) >> -;
@@ -22,9 +22,9 @@ gate(`1`) not { // neg
     (-) >> +;
 }
 
-node(in in1, in in2, out out1)    // ports
+block(in in1, in in2, out out1)    // ports
 foo
-with(or or1, or or2) { // not inliable nodes
+with(or or1, or or2) { // not inliable blocks
     in1 >> inv >> or1.in0; // inlined gate
     in2 >> or2.in1;
 
@@ -36,5 +36,5 @@ with(or or1, or or2) { // not inliable nodes
 }
 
 bench("mybench") { // bench is started by giving it to the runtime as an argument
-  | a_btn, sys_clk | >> foo >> node_out;
+  | a_btn, sys_clk | >> foo >> block_out;
 

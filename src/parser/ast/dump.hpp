@@ -99,8 +99,8 @@ class Dumper {
          is_last);
   }
 
-  void dump(const Node& n) {
-    branch("Node " + n.identifier, true, [&] {
+  void dump(const Block& n) {
+    branch("Block " + n.identifier, true, [&] {
       /* ports */
       branch("ports", false, [&] {
         for (size_t i = 0; i < n.port_list.size(); ++i) {
@@ -154,7 +154,7 @@ class Dumper {
 
   std::string expr(const std::string& s) { return s; }
 
-  std::string expr(const Qualified& q) { return q.node + "." + q.property; }
+  std::string expr(const Qualified& q) { return q.block + "." + q.property; }
 
   std::string expr(const Bus& b) {
     std::string out = "|";

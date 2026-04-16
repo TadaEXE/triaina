@@ -72,7 +72,7 @@ NUM     [0-9]+
 "in"      { return Parser::make_IN(LOC); }
 "out"     { return Parser::make_OUT(LOC); }
 "gate"    { return Parser::make_GATE(LOC); }
-"node"    { return Parser::make_NODE(LOC); }
+"block"   { return Parser::make_BLOCK(LOC); }
 "with"    { return Parser::make_WITH(LOC); }
 "bench"   { return Parser::make_BENCH(LOC); }
 

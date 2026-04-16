@@ -92,7 +92,7 @@ struct Bus {
 
 struct Qualified {
   Span sp;
-  std::string node;
+  std::string block;
   std::string property;
 };
 
@@ -113,7 +113,7 @@ struct Bench {
   std::vector<Chain> con_list;
 };
 
-/* Node */
+/* Block */
 struct Inst {
   Span sp;
   std::string type;
@@ -136,7 +136,7 @@ struct Port {
   std::string identifier;
 };
 
-struct Node {
+struct Block {
   Span sp;
   std::vector<Port> port_list;
   std::string identifier;
@@ -181,7 +181,7 @@ struct Clock {
 /* Structure */
 struct Item {
   Span sp;
-  std::variant<Input, Output, Clock, Gate, Node, Bench> inner;
+  std::variant<Input, Output, Clock, Gate, Block, Bench> inner;
 };
 
 struct Program {

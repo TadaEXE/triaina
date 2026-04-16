@@ -29,7 +29,7 @@
 %token IN "in"
 %token OUT "out"
 %token GATE "gate"
-%token NODE "node"
+%token BLOCK "block"
 %token WITH "with"
 %token BENCH "bench"
 
@@ -77,7 +77,7 @@
 %type <std::optional<ast::With>> opt_with
 %type <ast::Port> port
 %type <std::vector<ast::Port>> port_list
-%type <ast::Node> node_def
+%type <ast::Block> block_def
 
 %type <std::vector<ast::TritMatch>> trit_match_list
 %type <ast::GateArm> gate_arm
@@ -142,7 +142,7 @@ item
   | output_decl { $$ = ast::Item{sp(driver, @$), $1}; }
   | clock_decl { $$ = ast::Item{sp(driver, @$), $1}; }
   | gate_def { $$ = ast::Item{sp(driver, @$), $1}; }
-  | node_def { $$ = ast::Item{sp(driver, @$), $1}; }
+  | block_def { $$ = ast::Item{sp(driver, @$), $1}; }
   | bench_def { $$ = ast::Item{sp(driver, @$), $1}; }
   | error SEMI
     {
@@ -239,12 +239,12 @@ trit_match
   | UNDER { $$ = '_'; }
   ;
 
-/* NODE */
+/* BLOCK */
 
-node_def
-  : NODE LPAREN port_list RPAREN WORD opt_with LCURL chain_list RCURL
+block_def
+  : BLOCK LPAREN port_list RPAREN WORD opt_with LCURL chain_list RCURL
     {
-      $$ = ast::Node {
+      $$ = ast::Block {
         .sp = sp(driver, @$),
         .port_list = std::move($3),
         .identifier = std::move($5),
@@ -388,7 +388,7 @@ qualified
     {
       $$ = ast::Qualified {
         .sp = sp(driver, @$),
-        .node = std::move($1),
+        .block = std::move($1),
         .property = std::move($3),
       };
     }
