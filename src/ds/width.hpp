@@ -25,6 +25,7 @@ struct Width {
   static res::expected<Width> unify(std::span<const Width> widths);
 
   static constexpr Width Fixed(size_t v) { return Width{Kind::Fixed, v}; }
+
   static constexpr Width Dynamic(size_t w) { return Width{Kind::Dynamic, 0}; }
 };
 

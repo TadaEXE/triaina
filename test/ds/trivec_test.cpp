@@ -144,7 +144,8 @@ TEST(TriMaVec, ExpandWildcardsGeneratesAllCombinations) {
   ASSERT_EQ(expanded.size(), 9u);
 
   std::set<std::string> got;
-  for (auto& tv : expanded) got.insert(std::to_string(tv));
+  for (auto& tv : expanded)
+    got.insert(std::to_string(tv));
 
   std::set<std::string> expect = {
       "+0+", "+00", "+0-", "00+", "000", "00-", "-0+", "-00", "-0-",

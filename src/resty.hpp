@@ -24,9 +24,7 @@ struct Error {
       cur = &*cur->inner;
     }
 
-    if (cur) {
-      cur->inner = std::make_unique<Error>(std::move(other));
-    }
+    if (cur) { cur->inner = std::make_unique<Error>(std::move(other)); }
     return *this;
   }
 
@@ -86,8 +84,7 @@ static inline std::unexpected<Error> unexpected(Error& fwd) {
   return std::unexpected<Error>(Error{std::move(fwd)});
 }
 
-static inline std::unexpected<Error> unexpected(Error& inner,
-                                                const std::string& msg,
+static inline std::unexpected<Error> unexpected(Error& inner, const std::string& msg,
                                                 std::any dbg_tag = {}) {
   return std::unexpected<Error>(Error{
                                     .msg = msg,

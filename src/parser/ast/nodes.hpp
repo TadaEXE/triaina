@@ -46,8 +46,8 @@ enum class TritMatch : int8_t {
   Wild = 2,
 };
 
-static inline TritMatch char_to_trit_match(
-    const char c, const TritMatch on_err = TritMatch::Wild) {
+static inline TritMatch char_to_trit_match(const char c,
+                                           const TritMatch on_err = TritMatch::Wild) {
   switch (c) {
     case '+':
       return TritMatch::Plus;

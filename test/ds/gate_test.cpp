@@ -20,10 +20,8 @@ TEST(Gate, EvalFailsBeforeInit) {
 TEST(Gate, InitRejectsIncompleteDefinition) {
   ds::Gate g(1);
 
-  ASSERT_TRUE(
-      g.add_arm(ds::GateArm{ds::TriMaVec{"+"}, ds::Trit::Plus}).has_value());
-  ASSERT_TRUE(
-      g.add_arm(ds::GateArm{ds::TriMaVec{"0"}, ds::Trit::Zero}).has_value());
+  ASSERT_TRUE(g.add_arm(ds::GateArm{ds::TriMaVec{"+"}, ds::Trit::Plus}).has_value());
+  ASSERT_TRUE(g.add_arm(ds::GateArm{ds::TriMaVec{"0"}, ds::Trit::Zero}).has_value());
 
   auto r = g.init();
   ASSERT_FALSE(r.has_value());
@@ -33,8 +31,7 @@ TEST(Gate, InitRejectsIncompleteDefinition) {
 TEST(Gate, AddArmRejectsRedefinitionWithoutWildcards) {
   ds::Gate g(1);
 
-  ASSERT_TRUE(
-      g.add_arm(ds::GateArm{ds::TriMaVec{"+"}, ds::Trit::Plus}).has_value());
+  ASSERT_TRUE(g.add_arm(ds::GateArm{ds::TriMaVec{"+"}, ds::Trit::Plus}).has_value());
   auto r = g.add_arm(ds::GateArm{ds::TriMaVec{"+"}, ds::Trit::Minus});
   ASSERT_FALSE(r.has_value());
   EXPECT_TRUE(r.error() == ds::DSError::Redefinition);
@@ -43,12 +40,9 @@ TEST(Gate, AddArmRejectsRedefinitionWithoutWildcards) {
 TEST(Gate, InitAndEvalWorksForFullyDefinedWidth1) {
   ds::Gate g(1);
 
-  ASSERT_TRUE(
-      g.add_arm(ds::GateArm{ds::TriMaVec{"+"}, ds::Trit::Plus}).has_value());
-  ASSERT_TRUE(
-      g.add_arm(ds::GateArm{ds::TriMaVec{"0"}, ds::Trit::Zero}).has_value());
-  ASSERT_TRUE(
-      g.add_arm(ds::GateArm{ds::TriMaVec{"-"}, ds::Trit::Minus}).has_value());
+  ASSERT_TRUE(g.add_arm(ds::GateArm{ds::TriMaVec{"+"}, ds::Trit::Plus}).has_value());
+  ASSERT_TRUE(g.add_arm(ds::GateArm{ds::TriMaVec{"0"}, ds::Trit::Zero}).has_value());
+  ASSERT_TRUE(g.add_arm(ds::GateArm{ds::TriMaVec{"-"}, ds::Trit::Minus}).has_value());
 
   ASSERT_TRUE(g.init().has_value());
 
@@ -68,8 +62,7 @@ TEST(Gate, CallRejectsWrongWidth) {
   ASSERT_FALSE(r.has_value());
   EXPECT_TRUE(r.error() == ds::DSError::UseBeforeInit);
 
-  ASSERT_TRUE(
-      g.add_arm(ds::GateArm{ds::TriMaVec{"-"}, ds::Trit::Zero}).has_value());
+  ASSERT_TRUE(g.add_arm(ds::GateArm{ds::TriMaVec{"-"}, ds::Trit::Zero}).has_value());
   auto init = g.init();
   ASSERT_FALSE(init.has_value());
 
@@ -82,12 +75,9 @@ TEST(Gate, CallRejectsWrongWidth) {
 TEST(Gate, CallRejectsInvalidArgCountAfterInit) {
   ds::Gate g(1);
 
-  ASSERT_TRUE(
-      g.add_arm(ds::GateArm{ds::TriMaVec{"+"}, ds::Trit::Plus}).has_value());
-  ASSERT_TRUE(
-      g.add_arm(ds::GateArm{ds::TriMaVec{"0"}, ds::Trit::Zero}).has_value());
-  ASSERT_TRUE(
-      g.add_arm(ds::GateArm{ds::TriMaVec{"-"}, ds::Trit::Minus}).has_value());
+  ASSERT_TRUE(g.add_arm(ds::GateArm{ds::TriMaVec{"+"}, ds::Trit::Plus}).has_value());
+  ASSERT_TRUE(g.add_arm(ds::GateArm{ds::TriMaVec{"0"}, ds::Trit::Zero}).has_value());
+  ASSERT_TRUE(g.add_arm(ds::GateArm{ds::TriMaVec{"-"}, ds::Trit::Minus}).has_value());
   ASSERT_TRUE(g.init().has_value());
 
   auto r = g.call({});
@@ -102,8 +92,7 @@ TEST(Gate, CallRejectsInvalidArgCountAfterInit) {
 TEST(Gate, CallRejectsUnresolvableLengths) {
   ds::Gate g(2);
 
-  ASSERT_TRUE(
-      g.add_arm(ds::GateArm{ds::TriMaVec{"__"}, ds::Trit::Zero}).has_value());
+  ASSERT_TRUE(g.add_arm(ds::GateArm{ds::TriMaVec{"__"}, ds::Trit::Zero}).has_value());
   // Expand-only-wildcards yields full coverage for width=2
   ASSERT_TRUE(g.init().has_value());
 
@@ -120,12 +109,9 @@ TEST(Gate, CallRejectsUnresolvableLengths) {
 TEST(Gate, CallProducesVectorResult) {
   ds::Gate g(1);
 
-  ASSERT_TRUE(
-      g.add_arm(ds::GateArm{ds::TriMaVec{"+"}, ds::Trit::Plus}).has_value());
-  ASSERT_TRUE(
-      g.add_arm(ds::GateArm{ds::TriMaVec{"0"}, ds::Trit::Zero}).has_value());
-  ASSERT_TRUE(
-      g.add_arm(ds::GateArm{ds::TriMaVec{"-"}, ds::Trit::Minus}).has_value());
+  ASSERT_TRUE(g.add_arm(ds::GateArm{ds::TriMaVec{"+"}, ds::Trit::Plus}).has_value());
+  ASSERT_TRUE(g.add_arm(ds::GateArm{ds::TriMaVec{"0"}, ds::Trit::Zero}).has_value());
+  ASSERT_TRUE(g.add_arm(ds::GateArm{ds::TriMaVec{"-"}, ds::Trit::Minus}).has_value());
   ASSERT_TRUE(g.init().has_value());
 
   ds::TriVec in{"+0-"};

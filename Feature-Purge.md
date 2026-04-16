@@ -44,14 +44,14 @@ gate(`1`) not { // neg
     (-) >> +;
 }
 
-node(in in1, in in2, out out1)    // ports
+block(in in1, in in2, out out1)    // ports
 foo
 with(or or1, or or2) { // not inliable nodes
     in1 >> inv >> or1.i0; // inlined gate
     in2 >> or2.i1;
 
-    or1.o1 >> or2.i0;
-    or2.o1 >> or1.i1;
+    or1 >> or2.i0;
+    or2 >> or1.i1;
     // might add unpacking like: |or1.o, or2.o| >> |or2.i0, or1.i1|;
 
     |or1.o, or2.o| >> or >> out1; // custom bus into inlined gate to output

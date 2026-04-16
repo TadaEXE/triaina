@@ -1,4 +1,3 @@
 #include "ds/bus.hpp"
 
-namespace ds {
-}
+namespace ds {}

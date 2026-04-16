@@ -5,7 +5,9 @@
 
 namespace ds {
 
-inline size_t abs(int64_t x, size_t len) { return x >= 0 ? x : len + x; }
+inline size_t abs(int64_t x, size_t len) {
+  return x >= 0 ? x : len + x;
+}
 
 NormalizedSlice Slice::normalize(size_t len) {
   size_t l = abs(lo.value_or(1), len);

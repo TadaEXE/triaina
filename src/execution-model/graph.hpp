@@ -5,13 +5,11 @@
 
 namespace model {
 
-  struct Node {
-    size_t arity;
+struct Node {
+  size_t arity;
 
+  uint64_t last_visited_step = 0;
+};
 
-    uint64_t last_visited_step = 0;
-  };
-
-  class Graph {
-  };
-}
+class Graph {};
+}  // namespace model

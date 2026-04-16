@@ -1,15 +1,14 @@
 #pragma once
 
-#include "parser/driver.hpp"
 #include "parser.tab.hpp"
+#include "parser/driver.hpp"
 
 namespace parser {
 
 class ParserWrapper {
-public:
-
-private:
+ public:
+ private:
   Driver driver_;
   location loc_;
 };
-}
+}  // namespace parser

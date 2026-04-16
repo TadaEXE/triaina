@@ -14,20 +14,25 @@ namespace ds {
 class Bus {
  public:
   Bus() = default;
+
   explicit Bus(const std::vector<TriVec>& items) : items_(items) {}
-  explicit Bus(const std::span<TriVec>& items)
-      : items_(items.begin(), items.end()) {}
+
+  explicit Bus(const std::span<TriVec>& items) : items_(items.begin(), items.end()) {}
 
   size_t size() const { return items_.size(); }
+
   bool empty() const { return items_.empty(); }
 
   const TriVec& at(size_t i) const { return items_.at(i); }
+
   TriVec& at(size_t i) { return items_.at(i); }
 
   const TriVec& operator[](size_t i) const { return at(i); }
+
   TriVec& operator[](size_t i) { return at(i); }
 
   const auto& items() const { return items_; }
+
   auto& items() { return items_; }
 
   res::expected<TriVec> get_ref(size_t k) {

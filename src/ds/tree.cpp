@@ -9,21 +9,15 @@ void Tree::add(TriVec pattern, Trit value) {
   for (auto& t : pattern.data()) {
     switch (t) {
       case Trit::Minus:
-        if (!(*cur)->mc) {
-          (*cur)->mc = std::make_unique<TreeNode>();
-        }
+        if (!(*cur)->mc) { (*cur)->mc = std::make_unique<TreeNode>(); }
         cur = &(*cur)->mc;
         break;
       case Trit::Zero:
-        if (!(*cur)->zc) {
-          (*cur)->zc = std::make_unique<TreeNode>();
-        }
+        if (!(*cur)->zc) { (*cur)->zc = std::make_unique<TreeNode>(); }
         cur = &(*cur)->zc;
         break;
       case Trit::Plus:
-        if (!(*cur)->pc) {
-          (*cur)->pc = std::make_unique<TreeNode>();
-        }
+        if (!(*cur)->pc) { (*cur)->pc = std::make_unique<TreeNode>(); }
         cur = &(*cur)->pc;
         break;
     }

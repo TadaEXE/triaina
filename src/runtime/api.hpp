@@ -11,6 +11,7 @@
 #include "resty.hpp"
 // #include "runtime/fixpoint.hpp"
 #include "runtime/ids.hpp"
+
 // #include "runtime/registry.hpp"
 // #include "runtime/source_loc.hpp"
 // #include "runtime/signature.hpp"
@@ -69,12 +70,10 @@ class RuntimeAPI {
   virtual ds::TriVec value_from_char(uint32_t cp) = 0;
 
   /// @brief Slices a value using Triaina bracket slicing semantics.
-  virtual res::expected<ds::TriVec> value_slice(const ds::TriVec& v,
-                                                ds::Slice s) = 0;
+  virtual res::expected<ds::TriVec> value_slice(const ds::TriVec& v, ds::Slice s) = 0;
 
   /// @brief Concatenates two values as the `%` operator does.
-  virtual ds::TriVec value_concat(const ds::TriVec& a,
-                                  const ds::TriVec& b) = 0;
+  virtual ds::TriVec value_concat(const ds::TriVec& a, const ds::TriVec& b) = 0;
 
   /// @brief Constructs a bus from values as a list literal does.
   virtual ds::Bus bus_make(std::span<const ds::TriVec> values) = 0;
@@ -83,12 +82,10 @@ class RuntimeAPI {
   virtual ds::Bus bus_single(const ds::TriVec& v) = 0;
 
   /// @brief Safely reads the k-th element from the given bus.
-  virtual res::expected<ds::TriVec> bus_get(const ds::Bus& b,
-                                            uint32_t k) const = 0;
+  virtual res::expected<ds::TriVec> bus_get(const ds::Bus& b, uint32_t k) const = 0;
 
   /// @brief Creates a fixed-width register and binds it to a name.
-  virtual res::expected<RegId> reg_create(SymbolId name,
-                                          uint32_t width) = 0;
+  virtual res::expected<RegId> reg_create(SymbolId name, uint32_t width) = 0;
 
   /// @brief Creates a variable with fixed or dynamic declared width.
   virtual res::expected<VarId> var_create(SymbolId name, ds::Width w) = 0;
@@ -112,29 +109,23 @@ class RuntimeAPI {
   virtual res::expected<ds::TriVec> reg_blocking_read(RegId r) = 0;
 
   /// @brief Creates a gate definition object in the registry.
-  virtual res::expected<GateId> gate_create(SymbolId name,
-                                            uint32_t arity) = 0;
+  virtual res::expected<GateId> gate_create(SymbolId name, uint32_t arity) = 0;
 
   /// @brief Adds one gate arm and enforces coverage constraints.
-  virtual res::vexpected gate_add_arm(GateId id,
-                                      const ds::GateArm& arm) = 0;
+  virtual res::vexpected gate_add_arm(GateId id, const ds::GateArm& arm) = 0;
 
   /// @brief Finalizes a gate so it can be applied during execution.
   virtual res::vexpected gate_init(GateId id) = 0;
 
   /// @brief Applies a gate to a bus and returns the output bus.
-  virtual res::expected<ds::Bus> gate_apply(GateId id,
-                                            const ds::Bus& inputs)
-      const = 0;
+  virtual res::expected<ds::Bus> gate_apply(GateId id, const ds::Bus& inputs) const = 0;
 
   /// @brief Creates a sequential function and stores its body callback.
-  virtual res::expected<FuncId> func_create(SymbolId name,
-                                            FuncSignature sig,
+  virtual res::expected<FuncId> func_create(SymbolId name, FuncSignature sig,
                                             Registry::SeqBodyFn body) = 0;
 
   /// @brief Creates a fixpoint function and stores its step callback.
-  virtual res::expected<FuncId> func_create_fix(SymbolId name,
-                                                FuncSignature sig,
+  virtual res::expected<FuncId> func_create_fix(SymbolId name, FuncSignature sig,
                                                 Registry::FixBodyFn body) = 0;
 
   /// @brief Creates a sequential lambda and stores its body callback.
@@ -146,13 +137,11 @@ class RuntimeAPI {
                                                     Registry::FixBodyFn body) = 0;
 
   /// @brief Calls a function with an entry bus for chain evaluation.
-  virtual res::expected<CallResult> call(FuncId f,
-                                         std::span<const ds::TriVec> args,
+  virtual res::expected<CallResult> call(FuncId f, std::span<const ds::TriVec> args,
                                          ds::Bus initial_bus) = 0;
 
   /// @brief Calls a lambda with an entry bus for chain evaluation.
-  virtual res::expected<CallResult> call(LambdaId c,
-                                         std::span<const ds::TriVec> args,
+  virtual res::expected<CallResult> call(LambdaId c, std::span<const ds::TriVec> args,
                                          ds::Bus initial_bus) = 0;
 
   /// @brief Sets fixpoint step limits for subsequent fixpoint runs.
@@ -160,16 +149,12 @@ class RuntimeAPI {
 
   /// @brief Begins fixpoint evaluation for a function with `/cells/`.
   virtual res::expected<FixpointEngine::Ctx> fix_begin(
-      FuncId f,
-      std::span<const ds::TriVec> args,
-      std::span<const CellActual> overrides,
+      FuncId f, std::span<const ds::TriVec> args, std::span<const CellActual> overrides,
       ds::Bus initial_bus) = 0;
 
   /// @brief Begins fixpoint evaluation for a lambda with `/cells/`.
   virtual res::expected<FixpointEngine::Ctx> fix_begin(
-      LambdaId c,
-      std::span<const ds::TriVec> args,
-      std::span<const CellActual> overrides,
+      LambdaId c, std::span<const ds::TriVec> args, std::span<const CellActual> overrides,
       ds::Bus initial_bus) = 0;
 
   /// @brief Prepares a microstep by clearing staged writes.
@@ -182,27 +167,21 @@ class RuntimeAPI {
   virtual res::expected<CallResult> fix_end(FixpointEngine::Ctx& ctx) = 0;
 
   /// @brief Reads a fixpoint state cell from the current snapshot.
-  virtual res::expected<ds::TriVec> fix_cell_read(
-      FixpointEngine::Ctx& ctx,
-      SymbolId cell_name) = 0;
+  virtual res::expected<ds::TriVec> fix_cell_read(FixpointEngine::Ctx& ctx,
+                                                  SymbolId cell_name) = 0;
 
   /// @brief Stages a fixpoint state cell write for step commit.
-  virtual res::vexpected fix_cell_stage_write(
-      FixpointEngine::Ctx& ctx,
-      SymbolId cell_name,
-      const ds::TriVec& v) = 0;
+  virtual res::vexpected fix_cell_stage_write(FixpointEngine::Ctx& ctx,
+                                              SymbolId cell_name,
+                                              const ds::TriVec& v) = 0;
 
   /// @brief Reads a locked register from the fixpoint snapshot.
-  virtual res::expected<ds::TriVec> fix_reg_read_locked(
-      FixpointEngine::Ctx& ctx,
-      RegId r) = 0;
+  virtual res::expected<ds::TriVec> fix_reg_read_locked(FixpointEngine::Ctx& ctx,
+                                                        RegId r) = 0;
 
   /// @brief Stages a locked register write for step commit.
-  virtual res::vexpected fix_reg_stage_write_locked(
-      FixpointEngine::Ctx& ctx,
-      RegId r,
-      const ds::TriVec& v) = 0;
+  virtual res::vexpected fix_reg_stage_write_locked(FixpointEngine::Ctx& ctx, RegId r,
+                                                    const ds::TriVec& v) = 0;
 };
 
 }  // namespace rtm
-

@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include "ds/trit.hpp"
 #include "ds/errors.hpp"
+#include "ds/trit.hpp"
 #include "resty.hpp"
 
 namespace ds {
@@ -45,8 +45,7 @@ TriVec::TriVec(const TriMaVec& tmv) {
 }
 
 res::vexpected TriVec::resize_to(size_t len, Trit fill) {
-  if (fixed_)
-    return res::unexpected("Can not resize fixed vector.", DSError::Unknown);
+  if (fixed_) return res::unexpected("Can not resize fixed vector.", DSError::Unknown);
 
   auto cur = length();
   if (cur == len) return {};
@@ -64,16 +63,14 @@ res::vexpected TriVec::resize_to(size_t len, Trit fill) {
   return {};
 }
 
-res::expected<std::vector<TriVec>> TriVec::try_length_resolve(
-    std::vector<TriVec> tvs) {
+res::expected<std::vector<TriVec>> TriVec::try_length_resolve(std::vector<TriVec> tvs) {
   size_t target_len = 0;
   bool fixed = false;
   for (auto& tv : tvs) {
     if (tv.fixed()) {
       if (fixed && tv.length() != target_len) {
-        return res::unexpected(
-            "Can not resolve length for multiple fixed size vectors.",
-            DSError::InvalidArgs);
+        return res::unexpected("Can not resolve length for multiple fixed size vectors.",
+                               DSError::InvalidArgs);
       }
       if (fixed) continue;
 
@@ -81,9 +78,7 @@ res::expected<std::vector<TriVec>> TriVec::try_length_resolve(
       target_len = tv.length();
     }
 
-    if (!fixed && tv.length() > target_len) {
-      target_len = tv.length();
-    }
+    if (!fixed && tv.length() > target_len) { target_len = tv.length(); }
   }
 
   for (auto& tv : tvs) {
@@ -99,8 +94,7 @@ res::expected<std::vector<TriVec>> TriVec::try_length_resolve(
 
 res::expected<std::vector<TriVec>> TriVec::get_tritwise_cut(
     const std::vector<TriVec>& tvs) {
-  if (tvs.empty())
-    return res::unexpected("Can not do tritwise cut on empty args.");
+  if (tvs.empty()) return res::unexpected("Can not do tritwise cut on empty args.");
 
   size_t len = tvs[0].length();
   for (auto& tv : tvs) {
@@ -154,9 +148,7 @@ std::vector<TriMaVec> TriMaVec::resolve_wildcards(std::vector<TriMaVec>& tmvs,
 
   size_t j = i;
   for (; j < test.size(); ++j) {
-    if (test[j] == TritMatch::Wild) {
-      break;
-    }
+    if (test[j] == TritMatch::Wild) { break; }
   }
   if (j >= test.size()) return tmvs;
 

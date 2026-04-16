@@ -5,9 +5,13 @@
 
 namespace parser {
 
-bool Driver::had_error() const { return !error_msg.empty(); }
+bool Driver::had_error() const {
+  return !error_msg.empty();
+}
 
-void Driver::set_program(ast::Program p) { ast.set_program(p); }
+void Driver::set_program(ast::Program p) {
+  ast.set_program(p);
+}
 
 void Driver::set_filename(std::string&& fn) {
   filename = std::move(fn);
@@ -34,8 +38,7 @@ ast::Span Driver::span_from(const parser::location& l) {
 }
 
 void Driver::on_error(int line, int col, const std::string& msg) {
-  error_msg.push_back(std::to_string(line) + ":" + std::to_string(col) + ": " +
-                      msg);
+  error_msg.push_back(std::to_string(line) + ":" + std::to_string(col) + ": " + msg);
 }
 
 }  // namespace parser

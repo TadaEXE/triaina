@@ -21,9 +21,7 @@ class Ast {
     std::vector<const T*> ts;
     if (program_) {
       for (auto& t : program_->item_list) {
-        if (std::holds_alternative<T>(t.inner)) {
-          ts.push_back(&std::get<T>(t.inner));
-        }
+        if (std::holds_alternative<T>(t.inner)) { ts.push_back(&std::get<T>(t.inner)); }
       }
     }
     return ts;

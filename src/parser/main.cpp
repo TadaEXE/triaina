@@ -1,9 +1,9 @@
 #include <cstdio>
 #include <iostream>
 
-#include "parser/ast/ast.hpp"
 #include "driver.hpp"
 #include "parser.tab.hpp"
+#include "parser/ast/ast.hpp"
 
 int triaina_lex_init(yyscan_t* scanner);
 int triaina_lex_destroy(yyscan_t scanner);

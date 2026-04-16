@@ -21,8 +21,8 @@ TEST(Resty, UnexpectedWithDbgTagComparesByTag) {
 
 TEST(Resty, NestedUnexpectedPreservesOuterTag) {
   auto inner_u = res::unexpected("inner", ds::DSError::InvalidArgs);
-  auto outer_u = res::unexpected(inner_u.error(), "outer",
-                                 ds::DSError::MalformedStructure);
+  auto outer_u =
+      res::unexpected(inner_u.error(), "outer", ds::DSError::MalformedStructure);
 
   EXPECT_TRUE(outer_u.error() == ds::DSError::MalformedStructure);
 }
