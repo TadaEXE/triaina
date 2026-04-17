@@ -8,12 +8,12 @@ clock(`50`, `50`) sys_clk; // 50 ms clock with 50% duty-cycle; P0 => -; P1 => +;
 output("Block_Output") block_out; // Will output the name followed by the new value on every change
 
 gate(`2`) or { // max
-    (-, -) >> -;
-    (-, 0) >> 0;
-    (0, -) >> 0;
-    (0, 0) >> 0;
-    (_, _) >> +;
+    (-) >> -; // same as (-, -) >> -;
+    (0) ?> 0; // matches all cases containing 0
+    (_) >> +;
 }
+
+
 
 gate(`1`) not { // neg
     (+) >> -;

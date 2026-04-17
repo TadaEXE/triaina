@@ -4,9 +4,10 @@
 #include <cstdint>
 #include <vector>
 
-namespace exec {
+namespace exmo {
 class Node {
  public:
+   /// @brief Returns aryity of Node
   const size_t arity() const { return inputs_.size(); }
 
   const uint64_t last_visited() const { return last_visited_; }

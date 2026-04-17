@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace model {
+namespace exmo {
 
 struct Node {
   size_t arity;
