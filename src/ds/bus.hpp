@@ -12,7 +12,7 @@
 namespace ds {
 
   class Bus {
-  public:
+   public:
     Bus() = default;
 
     explicit Bus(const std::vector<TriVec>& items) : items_(items) {}
@@ -44,7 +44,7 @@ namespace ds {
       return at(k);
     }
 
-  private:
+   private:
     std::vector<TriVec> items_;
   };
 }  // namespace ds

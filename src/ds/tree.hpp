@@ -16,13 +16,13 @@ namespace ds {
   };
 
   class Tree {
-  public:
+   public:
     Tree() : root(std::make_unique<TreeNode>()) {}
 
     void add(TriVec pattern, Trit value);
     std::optional<Trit> match(TriVec pattern) const;
 
-  private:
+   private:
     std::unique_ptr<TreeNode> root;
   };
 

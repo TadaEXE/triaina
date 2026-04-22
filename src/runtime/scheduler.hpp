@@ -5,7 +5,7 @@
 
 namespace rtm {
   class ISchedulingTarget {
-  public:
+   public:
     virtual const uint64_t id() const = 0;
     virtual void evaluate(uint64_t step_count) = 0;
   };
@@ -18,10 +18,10 @@ namespace rtm {
   /// 5. wait for next step
   /// 6. go to 1.
   class Scheduler {
-  public:
+   public:
     inline void enqueue(ISchedulingTarget& t) { queue_.push(&t); }
 
-  private:
+   private:
     std::forward_list<const ISchedulingTarget*> collect_unique_targets();
     std::queue<ISchedulingTarget*> queue_;
 

@@ -11,7 +11,7 @@
 namespace ast {
 
   class Dumper {
-  public:
+   public:
     explicit Dumper(std::ostream& os) : os_(os) {}
 
     void set_show_spans(bool v) { show_spans_ = v; }
@@ -25,7 +25,7 @@ namespace ast {
       }
     }
 
-  private:
+   private:
     std::ostream& os_;
     bool show_spans_{false};
     std::vector<bool> last_;

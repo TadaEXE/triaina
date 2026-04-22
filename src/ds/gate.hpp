@@ -13,7 +13,7 @@ namespace ds {
   };
 
   class Gate {
-  public:
+   public:
     explicit Gate(size_t arity) : arity_(arity) {}
 
     res::vexpected add_arm(const GateArm& arm);
@@ -26,7 +26,7 @@ namespace ds {
 
     size_t arity() const { return arity_; }
 
-  private:
+   private:
     Tree spec_;
     bool inited_{false};
     size_t arm_count_{0};

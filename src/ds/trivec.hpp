@@ -12,7 +12,7 @@ namespace ds {
   class TriMaVec;
 
   class TriVec {
-  public:
+   public:
     TriVec() = default;
     TriVec(const TriVec&) = default;
     TriVec(TriVec&&) = default;
@@ -48,13 +48,13 @@ namespace ds {
 
     inline void fix_length() { fixed_ = true; }
 
-  private:
+   private:
     std::vector<Trit> data_;
     bool fixed_{false};
   };
 
   class TriMaVec {
-  public:
+   public:
     TriMaVec() = default;
     TriMaVec(const TriMaVec&) = default;
     TriMaVec(TriMaVec&&) = default;
@@ -76,7 +76,7 @@ namespace ds {
 
     const auto& operator[](size_t i) const { return at(i); }
 
-  private:
+   private:
     std::vector<TritMatch> data_;
     bool has_wildcards_{false};
     bool only_wildcrads_{false};

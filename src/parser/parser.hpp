@@ -6,8 +6,8 @@
 namespace parser {
 
   class ParserWrapper {
-  public:
-  private:
+   public:
+   private:
     Driver driver_;
     location loc_;
   };
