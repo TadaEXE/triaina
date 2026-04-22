@@ -8,7 +8,6 @@
 int triaina_lex_init(yyscan_t* scanner);
 int triaina_lex_destroy(yyscan_t scanner);
 void triaina_set_in(FILE* in_str, yyscan_t scanner);
-
 int main() {
   ast::Ast ast{};
   parser::Driver driver{ast};

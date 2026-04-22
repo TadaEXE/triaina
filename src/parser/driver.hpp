@@ -9,14 +9,11 @@
 #define YY_TYPEDEF_YY_SCANNER_T
 typedef void* yyscan_t;
 #endif
-
 namespace parser {
 
   class location;
-
   struct Driver {
     explicit Driver(ast::Ast& ast) : ast(ast) {}
-
     yyscan_t scanner = nullptr;
 
     ast::Ast& ast;

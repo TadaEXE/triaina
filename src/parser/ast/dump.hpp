@@ -7,15 +7,11 @@
 #include <vector>
 
 #include "parser/ast/nodes.hpp"
-
 namespace ast {
-
   class Dumper {
    public:
     explicit Dumper(std::ostream& os) : os_(os) {}
-
     void set_show_spans(bool v) { show_spans_ = v; }
-
     void dump(const Program& p) {
       root(hdr("Program", p.sp));
 
@@ -29,11 +25,9 @@ namespace ast {
     std::ostream& os_;
     bool show_spans_{false};
     std::vector<bool> last_;
-
     /* ---------- formatting ---------- */
 
     void root(const std::string& s) { os_ << s << "\n"; }
-
     void branch(const std::string& label, bool is_last, const auto& fn) {
       prefix();
       os_ << (is_last ? "╚" : "╠") << label << "\n";
@@ -41,52 +35,43 @@ namespace ast {
       fn();
       last_.pop_back();
     }
-
     void leaf(const std::string& label, bool is_last) {
       prefix();
       os_ << (is_last ? "╚" : "╠") << label << "\n";
     }
-
     void prefix() {
       for (bool l : last_) {
         os_ << (l ? "  " : "║ ");
       }
     }
-
     std::string hdr(const char* name, const Span& sp) const {
       std::string s = name;
       if (show_spans_) s += " [" + span(sp) + "]";
       return s;
     }
-
     static std::string span(const Span& s) {
       return std::to_string(s.begin.line) + ":" + std::to_string(s.begin.col) +
              "-" + std::to_string(s.end.line) + ":" + std::to_string(s.end.col);
     }
-
     /* ---------- items ---------- */
 
     void dump(const Item& it) {
       std::visit([&](const auto& x) { dump(x); }, it.inner);
     }
-
     void dump(const Input& n) {
       leaf("Input " + n.identifier + " trigger='" +
                std::string(1, n.trigger.c) + "'",
            true);
     }
-
     void dump(const Output& n) {
       leaf("Output " + n.identifier + " label=\"" + n.name.str + "\"", true);
     }
-
     void dump(const Clock& n) {
       leaf("Clock " + n.identifier +
                " period=" + std::to_string(n.cycle_ms.dec) +
                " duty=" + std::to_string(n.duty_cycle.dec),
            true);
     }
-
     void dump(const Gate& n) {
       branch("Gate " + n.identifier + " width=" + std::to_string(n.width.dec),
              true, [&] {
@@ -95,13 +80,11 @@ namespace ast {
                }
              });
     }
-
     void dump(const GateArm& n, size_t idx, bool is_last) {
       leaf("arm[" + std::to_string(idx) + "]: " + pattern(n.trit_match_list) +
                " >> " + trit(n.result.trit),
            is_last);
     }
-
     void dump(const Block& n) {
       branch("Block " + n.identifier, true, [&] {
         /* ports */
@@ -130,7 +113,6 @@ namespace ast {
         });
       });
     }
-
     void dump(const Bench& n) {
       branch("Bench \"" + n.name.str + "\"", true, [&] {
         for (size_t i = 0; i < n.con_list.size(); ++i) {
@@ -138,7 +120,6 @@ namespace ast {
         }
       });
     }
-
     /* ---------- chains ---------- */
 
     void dump(const Chain& c, size_t idx, bool is_last) {
@@ -148,17 +129,13 @@ namespace ast {
         }
       });
     }
-
     /* ---------- expressions ---------- */
 
     std::string expr(const Expression& e) {
       return std::visit([&](const auto& x) { return expr(x); }, e.primary);
     }
-
     std::string expr(const std::string& s) { return s; }
-
     std::string expr(const Qualified& q) { return q.block + "." + q.property; }
-
     std::string expr(const Bus& b) {
       std::string out = "|";
       for (size_t i = 0; i < b.expression_list.size(); ++i) {
@@ -168,16 +145,13 @@ namespace ast {
       out += "|";
       return out;
     }
-
     std::string expr(const TritLiteral& t) { return trit(t.trit); }
-
     /* ---------- helpers ---------- */
 
     static std::string port(const Port& p) {
       return std::string(p.type == PortType::In ? "in " : "out ") +
              p.identifier;
     }
-
     static std::string trit(Trit t) {
       switch (t) {
         case Trit::Plus:
@@ -189,7 +163,6 @@ namespace ast {
       }
       return "?";
     }
-
     static std::string match(TritMatch t) {
       switch (t) {
         case TritMatch::Plus:
@@ -203,7 +176,6 @@ namespace ast {
       }
       return "?";
     }
-
     static std::string pattern(const std::vector<TritMatch>& p) {
       std::string out = "(";
       for (size_t i = 0; i < p.size(); ++i) {
@@ -214,5 +186,4 @@ namespace ast {
       return out;
     }
   };
-
 }  // namespace ast

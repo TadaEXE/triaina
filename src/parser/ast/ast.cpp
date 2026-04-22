@@ -3,9 +3,7 @@
 #include <ostream>
 
 #include "parser/ast/dump.hpp"
-
 namespace ast {
-
   void Ast::dump(std::ostream& os) {
     Dumper dumper{os};
     if (!program_) {
@@ -14,5 +12,4 @@ namespace ast {
     }
     dumper.dump(*program_);
   }
-
 }  // namespace ast

@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <string>
 #include <string_view>
-
 namespace ds {
 
   enum class Trit : int8_t {
@@ -20,7 +19,6 @@ namespace ds {
   };
 
 }  // namespace ds
-
 namespace std {
   static constexpr std::string_view to_string(ds::Trit t) {
     switch (t) {
@@ -33,7 +31,6 @@ namespace std {
     }
     return "E";
   }
-
   static constexpr std::string_view to_string(ds::TritMatch t) {
     switch (t) {
       case ds::TritMatch::Minus:
@@ -47,5 +44,4 @@ namespace std {
     }
     return "E";
   }
-
 }  // namespace std

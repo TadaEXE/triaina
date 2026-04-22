@@ -1,9 +1,7 @@
 #include "ds/tree.hpp"
 
 #include <memory>
-
 namespace ds {
-
   void Tree::add(TriVec pattern, Trit value) {
     auto* cur = &root;
     for (auto& t : pattern.data()) {
@@ -25,7 +23,6 @@ namespace ds {
 
     (*cur)->val = value;
   }
-
   std::optional<Trit> Tree::match(TriVec pattern) const {
     auto* cur = &root;
     for (auto& t : pattern.data()) {
@@ -46,5 +43,4 @@ namespace ds {
     }
     return (*cur)->val;
   }
-
 }  // namespace ds

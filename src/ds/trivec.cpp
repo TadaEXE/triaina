@@ -5,9 +5,7 @@
 #include "ds/errors.hpp"
 #include "ds/trit.hpp"
 #include "resty.hpp"
-
 namespace ds {
-
   TriVec::TriVec(const std::string& input) {
     for (auto& i : input | std::views::reverse) {
       switch (i) {
@@ -25,7 +23,6 @@ namespace ds {
       }
     }
   }
-
   TriVec::TriVec(const TriMaVec& tmv) {
     for (auto& tm : tmv.data()) {
       switch (tm) {
@@ -43,7 +40,6 @@ namespace ds {
       }
     }
   }
-
   res::vexpected TriVec::resize_to(size_t len, Trit fill) {
     if (fixed_)
       return res::unexpected("Can not resize fixed vector.", DSError::Unknown);
@@ -63,7 +59,6 @@ namespace ds {
     }
     return {};
   }
-
   res::expected<std::vector<TriVec>> TriVec::try_length_resolve(
       std::vector<TriVec> tvs) {
     size_t target_len = 0;
@@ -94,7 +89,6 @@ namespace ds {
 
     return tvs;
   }
-
   res::expected<std::vector<TriVec>> TriVec::get_tritwise_cut(
       const std::vector<TriVec>& tvs) {
     if (tvs.empty())
@@ -118,7 +112,6 @@ namespace ds {
     }
     return res;
   }
-
   TriMaVec::TriMaVec(std::string input) {
     only_wildcrads_ = true;
     for (auto& i : input | std::views::reverse) {
@@ -144,7 +137,6 @@ namespace ds {
       }
     }
   }
-
   std::vector<TriMaVec> TriMaVec::resolve_wildcards(std::vector<TriMaVec>& tmvs,
                                                     size_t i) const {
     std::vector<TriMaVec> res;
@@ -169,7 +161,6 @@ namespace ds {
 
     return resolve_wildcards(res, j);
   }
-
   std::vector<TriVec> TriMaVec::expand_wildcards() const {
     std::vector<TriMaVec> tmp({*this});
     auto fin = resolve_wildcards(tmp);
@@ -179,5 +170,4 @@ namespace ds {
     }
     return res;
   }
-
 }  // namespace ds

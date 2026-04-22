@@ -4,9 +4,7 @@
 #include <expected>
 #include <memory>
 #include <string>
-
 namespace res {
-
   struct Error {
     std::string msg;
 
@@ -15,7 +13,6 @@ namespace res {
 #endif
 
     std::unique_ptr<Error> inner{};
-
     Error& operator+=(Error&& other) {
       if (this == &other) return *this;
 
@@ -27,7 +24,6 @@ namespace res {
       if (cur) { cur->inner = std::make_unique<Error>(std::move(other)); }
       return *this;
     }
-
 #if (DEBUG_BUILD || TEST_BUILD)
     template <typename T>
       requires requires(T t1, T t2) { t1 == t2; }
@@ -39,7 +35,6 @@ namespace res {
     }
 #endif
   };
-
   static Error operator+(const Error& lhs, Error&& rhs) {
     if (&lhs == &rhs) {
       return {
@@ -62,12 +57,10 @@ namespace res {
         .inner = std::make_unique<Error>(std::move(rhs)),
     };
   }
-
   template <typename T>
   using expected = std::expected<T, Error>;
 
   using vexpected = std::expected<void, Error>;
-
   static inline std::unexpected<Error> unexpected(const std::string& msg,
                                                   std::any dbg_tag = {}) {
     return std::unexpected<Error>(Error{
@@ -79,11 +72,9 @@ namespace res {
 
     });
   }
-
   static inline std::unexpected<Error> unexpected(Error& fwd) {
     return std::unexpected<Error>(Error{std::move(fwd)});
   }
-
   static inline std::unexpected<Error> unexpected(Error& inner,
                                                   const std::string& msg,
                                                   std::any dbg_tag = {}) {
@@ -97,9 +88,7 @@ namespace res {
                                   } +
                                   std::move(inner));
   }
-
 }  // namespace res
-
 namespace std {
   static std::string to_string(const res::Error& err) {
     std::string res;

@@ -7,9 +7,7 @@
 #include "ds/errors.hpp"
 #include "ds/trivec.hpp"
 #include "resty.hpp"
-
 namespace ds {
-
   res::vexpected Gate::add_arm(const GateArm& arm) {
     auto expans = arm.pattern.expand_wildcards();
     if (!arm.pattern.has_wildcards()) {
@@ -40,7 +38,6 @@ namespace ds {
     }
     return {};
   }
-
   res::vexpected Gate::init() {
     auto exp_arm_count = std::pow(3, arity_);
     if (arm_count_ != exp_arm_count)
@@ -52,7 +49,6 @@ namespace ds {
     inited_ = true;
     return {};
   }
-
   res::vexpected Gate::init(std::vector<GateArm> arms) {
     if (arms.empty())
       return res::unexpected("Arms empty", DSError::InvalidDefinition);
@@ -63,7 +59,6 @@ namespace ds {
 
     return init();
   }
-
   res::expected<Trit> Gate::eval(const TriVec& tv) const {
     if (!inited_) {
       return res::unexpected("Uninitialized gate can not evaluate input",
@@ -74,7 +69,6 @@ namespace ds {
     return res::unexpected("Trit could not be matched due to malformed gate.",
                            DSError::MalformedStructure);
   }
-
   res::expected<TriVec> Gate::call(const std::vector<TriVec>& tvs) const {
     if (!inited_) {
       return res::unexpected("Uninitialized gate can not evaluate input",
@@ -110,5 +104,4 @@ namespace ds {
 
     return TriVec(result);
   }
-
 }  // namespace ds
