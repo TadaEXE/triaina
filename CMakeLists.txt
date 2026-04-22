@@ -18,9 +18,7 @@ flex_target(Lexer grammar/lexer.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.yy.cpp)
 add_flex_bison_dependency(Lexer Parser)
 
 find_package(Protobuf CONFIG REQUIRED)
-set(PROTO_FILES
-  proto/graph/v1/graph.proto
-)
+set(PROTO_FILES proto/graph/v1/graph.proto)
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
 
 add_compile_definitions("DEBUG_BUILD=$<CONFIG:Debug>")
@@ -45,7 +43,12 @@ target_include_directories(
 )
 target_link_libraries(triaina_parser PRIVATE protobuf::libprotobuf)
 
-add_executable(triaina_runtime src/runtime/main.cpp)
+add_executable(
+    triaina_runtime
+    src/runtime/node.cpp
+    src/runtime/wire.cpp
+    src/runtime/main.cpp
+)
 
 target_link_libraries(triaina_runtime ds)
 
