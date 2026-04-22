@@ -3,15 +3,15 @@
 #include <functional>
 #include <vector>
 
+#include "runtime/model/edge.hpp"
 #include "runtime/scheduler.hpp"
-#include "runtime/wire.hpp"
 
 namespace rtm {
 
   class Node : public ISchedulingTarget {
   public:
     Node(const uint64_t id, const std::string& label,
-         std::function<State(std::vector<Wire>&, std::vector<Wire>&)> eval_func,
+         std::function<State(std::vector<Edge>&, std::vector<Edge>&)> eval_func,
          Scheduler& scheduler)
         : id_(id),
           label_(label),
@@ -29,11 +29,11 @@ namespace rtm {
     void evaluate(uint64_t step_count) override;
 
   private:
-    std::vector<Wire> inputs_;
-    std::vector<Wire> outputs_;
+    std::vector<Edge> inputs_;
+    std::vector<Edge> outputs_;
     const uint64_t id_;
     std::string label_;
-    std::function<State(std::vector<Wire>&, std::vector<Wire>&)> eval_func_;
+    std::function<State(std::vector<Edge>&, std::vector<Edge>&)> eval_func_;
     Scheduler& scheduler_;
   };
 

@@ -2,8 +2,8 @@
 
 #include <vector>
 
+#include "runtime/model/state.hpp"
 #include "runtime/scheduler.hpp"
-#include "runtime/state.hpp"
 
 namespace rtm {
 
@@ -13,9 +13,9 @@ namespace rtm {
   ///   - waits for the propagartion signal
   ///   - evaluates to one state
   ///   - enqueus the connected node to the eval queue
-  class Wire : public ISchedulingTarget {
+  class Edge : public ISchedulingTarget {
   public:
-    Wire(uint64_t id, ISchedulingTarget& target, Scheduler& scheduler,
+    Edge(uint64_t id, ISchedulingTarget& target, Scheduler& scheduler,
          const State default_state = State::Zero)
         : id_(id),
           target_(target),

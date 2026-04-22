@@ -1,18 +1,18 @@
-#include "runtime/wire.hpp"
+#include "runtime/model/edge.hpp"
 
 #include <algorithm>
 #include <format>
 
+#include "runtime/model/state.hpp"
 #include "runtime/scheduler.hpp"
-#include "runtime/state.hpp"
 
 namespace rtm {
 
-  void Wire::push_state(const State s) {
+  void Edge::push_state(const State s) {
     state_buffer_.push_back(s);
   }
 
-  void Wire::evaluate(const uint64_t step_count) {
+  void Edge::evaluate(const uint64_t step_count) {
     if (state_buffer_.empty()) return;
 
     last_update_ = step_count;
@@ -33,8 +33,8 @@ namespace rtm {
 }  // namespace rtm
 
 template <>
-struct std::formatter<rtm::Wire> : std::formatter<std::string> {
-  auto format(const rtm::Wire& w, format_context& ctx) const {
+struct std::formatter<rtm::Edge> : std::formatter<std::string> {
+  auto format(const rtm::Edge& w, format_context& ctx) const {
     return std::formatter<std::string>::format(
         std::format("{}({}, {})", w.state(), w.last_update(), w.id()), ctx);
   }

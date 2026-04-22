@@ -45,8 +45,8 @@ target_link_libraries(triaina_parser PRIVATE protobuf::libprotobuf)
 
 add_executable(
     triaina_runtime
-    src/runtime/node.cpp
-    src/runtime/wire.cpp
+    src/runtime/model/node.cpp
+    src/runtime/model/edge.cpp
     src/runtime/main.cpp
 )
 
