@@ -5,10 +5,10 @@
 
 namespace parser {
 
-class ParserWrapper {
- public:
- private:
-  Driver driver_;
-  location loc_;
-};
+  class ParserWrapper {
+  public:
+  private:
+    Driver driver_;
+    location loc_;
+  };
 }  // namespace parser

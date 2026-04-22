@@ -6,13 +6,13 @@
 
 namespace ast {
 
-void Ast::dump(std::ostream& os) {
-  Dumper dumper{os};
-  if (!program_) {
-    os << "No program in this ast\n";
-    return;
+  void Ast::dump(std::ostream& os) {
+    Dumper dumper{os};
+    if (!program_) {
+      os << "No program in this ast\n";
+      return;
+    }
+    dumper.dump(*program_);
   }
-  dumper.dump(*program_);
-}
 
 }  // namespace ast

@@ -6,29 +6,29 @@
 
 namespace rtm {
 
-enum class State : uint8_t {
-  Error,
-  HighZ,
-  Plus,
-  Minus,
-  Zero,
-};
+  enum class State : uint8_t {
+    Error,
+    HighZ,
+    Plus,
+    Minus,
+    Zero,
+  };
 
-inline std::string state_to_string(const State s) {
-  switch (s) {
-    case State::Error:
-      return "Error";
-    case State::HighZ:
-      return "HighZ";
-    case State::Plus:
-      return "Plus";
-    case State::Minus:
-      return "Minus";
-    case State::Zero:
-      return "Zero";
+  inline std::string state_to_string(const State s) {
+    switch (s) {
+      case State::Error:
+        return "Error";
+      case State::HighZ:
+        return "HighZ";
+      case State::Plus:
+        return "Plus";
+      case State::Minus:
+        return "Minus";
+      case State::Zero:
+        return "Zero";
+    }
+    return "Unknown";
   }
-  return "Unknown";
-}
 
 }  // namespace rtm
 
