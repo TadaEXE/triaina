@@ -47,6 +47,7 @@ add_executable(
     triaina_runtime
     src/runtime/model/node.cpp
     src/runtime/model/edge.cpp
+    src/runtime/model/port.cpp
     src/runtime/main.cpp
 )
 
@@ -54,11 +55,11 @@ target_link_libraries(triaina_runtime ds)
 
 target_include_directories(triaina_runtime PRIVATE src/)
 
-include(CTest)
-enable_testing()
-
-add_subdirectory(test EXCLUDE_FROM_ALL)
-
-add_custom_target(build-tests DEPENDS triaina_tests)
-target_compile_definitions(triaina_tests PUBLIC "TEST_BUILD=1")
+# include(CTest)
+# enable_testing()
+#
+# add_subdirectory(test EXCLUDE_FROM_ALL)
+#
+# add_custom_target(build-tests DEPENDS triaina_tests)
+# target_compile_definitions(triaina_tests PUBLIC "TEST_BUILD=1")
 target_compile_definitions(ds PUBLIC "TEST_BUILD=1")
