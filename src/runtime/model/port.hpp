@@ -9,11 +9,11 @@ namespace rtm {
 class node;
 class port {
  public:
-  std::forward_list<node*> connected_nodes ();
+  std::forward_list<node*> connected_nodes();
 
-  void push_state (const state);
+  void push_state(const state);
 
-  void mark_dirty ();
+  void mark_dirty();
 
  public:
   enum class type {
@@ -22,21 +22,11 @@ class port {
   };
 
  public:
-  const uintptr_t id () const {
-    return _id;
-  }
-  const auto& label () const {
-    return _label;
-  }
-  const auto type () const {
-    return _type;
-  }
-  const auto* binding () const {
-    return _binding;
-  }
-  const auto state () const {
-    return _state;
-  }
+  const uintptr_t id() const { return _id; }
+  const auto& label() const { return _label; }
+  const auto type() const { return _type; }
+  const auto* binding() const { return _binding; }
+  const auto state() const { return _state; }
 
  private:
   uintptr_t _id;

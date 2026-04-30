@@ -7,20 +7,19 @@
 #include "ds/trit.hpp"
 #include "ds/trivec.hpp"
 #include "resty.hpp"
-
 #include "runtime/model/graph.hpp"
 
-int main (int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
   rtm::pseudo_graph g;
   rtm::node n;
-  n.id () = 1;
+  n.id() = 1;
 
-  g.add (&n);
-  std::println ("{}", g.node_count ());
-  std::println ("{}", g.find<rtm::node> (1) == &n);
-  std::println ("{}", g.find<rtm::node> (11) == &n);
-  g.remove (&n);
-  std::println ("{}", g.node_count ());
+  g.add(&n);
+  std::println("{}", g.node_count());
+  std::println("{}", g.find<rtm::node>(1) == &n);
+  std::println("{}", g.find<rtm::node>(11) == &n);
+  g.remove(&n);
+  std::println("{}", g.node_count());
   // std::vector<ds::GateArm> arms = {{{"++"}, ds::Trit::Minus},
   //                                  {{"__"}, ds::Trit::Plus},
   //                                  {{"-_"}, ds::Trit::Zero}};

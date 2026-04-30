@@ -4,12 +4,12 @@
 
 #include "parser/ast/dump.hpp"
 namespace ast {
-  void Ast::dump(std::ostream& os) {
-    Dumper dumper{os};
-    if (!program_) {
-      os << "No program in this ast\n";
-      return;
-    }
-    dumper.dump(*program_);
+void Ast::dump(std::ostream& os) {
+  Dumper dumper{os};
+  if (!program_) {
+    os << "No program in this ast\n";
+    return;
   }
-}  // namespace ast
+  dumper.dump(*program_);
+}
+} // namespace ast

@@ -11,28 +11,28 @@ typedef void* yyscan_t;
 #endif
 namespace parser {
 
-  class location;
-  struct Driver {
-    explicit Driver(ast::Ast& ast) : ast(ast) {}
-    yyscan_t scanner = nullptr;
+class location;
+struct Driver {
+  explicit Driver(ast::Ast& ast) : ast(ast) {}
+  yyscan_t scanner = nullptr;
 
-    ast::Ast& ast;
+  ast::Ast& ast;
 
-    std::vector<std::string> error_msg;
+  std::vector<std::string> error_msg;
 
-    parser::location* loc = nullptr;
+  parser::location* loc = nullptr;
 
-    std::string filename;
-    std::unordered_map<std::string, size_t> file_ids;
+  std::string filename;
+  std::unordered_map<std::string, size_t> file_ids;
 
-    bool had_error() const;
-    void set_program(ast::Program p);
-    void set_filename(std::string&& fn);
+  bool had_error() const;
+  void set_program(ast::Program p);
+  void set_filename(std::string&& fn);
 
-    size_t file_id_for(const std::string_view& fn);
+  size_t file_id_for(const std::string_view& fn);
 
-    ast::Span span_from(const parser::location& l);
+  ast::Span span_from(const parser::location& l);
 
-    void on_error(int line, int col, const std::string& msg);
-  };
-}  // namespace parser
+  void on_error(int line, int col, const std::string& msg);
+};
+} // namespace parser
