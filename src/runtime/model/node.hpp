@@ -7,6 +7,7 @@
 #include "runtime/model/port.hpp"
 
 namespace rtm {
+
 class node {
  public:
   node(const uintptr_t id, size_t max_inputs, size_t max_outputs)

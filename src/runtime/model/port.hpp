@@ -5,8 +5,11 @@
 #include <string>
 
 #include "runtime/model/state.hpp"
+
 namespace rtm {
+
 class node;
+
 class port {
  public:
   std::forward_list<node*> connected_nodes();
@@ -31,6 +34,7 @@ class port {
  private:
   uintptr_t _id;
   std::string _label;
+  class node _node();
   enum type _type;
   node* _binding;
   enum state _state;
