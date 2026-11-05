@@ -1,6 +1,7 @@
 #pragma once
 namespace rtm {
-enum class state {
+enum class State {
+  unknown,
   error,
   high_z,
   minus,

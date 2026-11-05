@@ -1,17 +1,21 @@
 #pragma once
 
 #include <cstdint>
+
+#include "runtime/model/state.hpp"
+
 namespace rtm {
-class port;
-class edge {
+class Port;
+
+class Edge {
  public:
   const uintptr_t id() { return _id; }
-  const port* begin() { return _begin; }
-  const port* end() { return _end; }
+  const Port* begin() { return _begin; }
+  const Port* end() { return _end; }
 
  private:
   uintptr_t _id;
-  port* _begin;
-  port* _end;
+  Port* _begin;
+  Port* _end;
 };
 } // namespace rtm

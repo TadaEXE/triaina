@@ -6,13 +6,13 @@
 
 #include "runtime/model/port.hpp"
 namespace rtm {
-class evaluator {
+class Evaluator {
  public:
   bool fits_spec(size_t inputs, size_t outptus);
 
  private:
   uintptr_t _id;
   std::string _label;
-  std::function<void(std::vector<port*>, std::vector<port*>)> _eval_func;
+  std::function<void(std::vector<Port*>, std::vector<Port*>)> _eval_func;
 };
 } // namespace rtm

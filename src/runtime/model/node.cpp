@@ -7,15 +7,15 @@
 #include "runtime/model/port.hpp"
 
 namespace rtm {
-void node::enqueue_next() {}
-void node::replace_eval(rtm::evaluator& e) {}
-bool node::add_port(port& p) {
-  if (p.type() == port::type::input) {
+void Node::enqueue_next() {}
+void Node::replace_eval(rtm::Evaluator& e) {}
+bool Node::add_port(Port& p) {
+  if (p.type() == Port::Type::Input) {
     _inputs.push_back(&p);
     return true;
   }
 
   return false;
 }
-void node::remove_port(uintptr_t id) {}
+void Node::remove_port(uintptr_t id) {}
 } // namespace rtm

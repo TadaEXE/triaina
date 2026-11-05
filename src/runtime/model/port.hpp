@@ -8,20 +8,20 @@
 
 namespace rtm {
 
-class node;
+class Node;
 
-class port {
+class Port {
  public:
-  std::forward_list<node*> connected_nodes();
+  std::forward_list<Node*> connected_nodes();
 
-  void push_state(const state);
+  void push_state(const State);
 
   void mark_dirty();
 
  public:
-  enum class type {
-    input,
-    output,
+  enum class Type {
+    Input,
+    Output,
   };
 
  public:
@@ -34,11 +34,11 @@ class port {
  private:
   uintptr_t _id;
   std::string _label;
-  class node _node();
-  enum type _type;
-  node* _binding;
-  enum state _state;
+  Node _node();
+  Type _type;
+  Node* _binding;
+  State _state;
   bool _dirty = true;
-  std::forward_list<node*> _con_cache;
+  std::forward_list<Node*> _con_cache;
 };
 } // namespace rtm

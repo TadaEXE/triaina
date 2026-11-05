@@ -8,16 +8,16 @@
 
 namespace rtm {
 
-class node {
+class Node {
  public:
-  node(const uintptr_t id, size_t max_inputs, size_t max_outputs)
+  Node(const uintptr_t id, size_t max_inputs, size_t max_outputs)
       : _id(id), _max_inputs(max_inputs), _max_outputs(max_outputs) {}
 
   void enqueue_next();
 
-  void replace_eval(evaluator& e);
+  void replace_eval(Evaluator& e);
 
-  bool add_port(port& e);
+  bool add_port(Port& e);
   void remove_port(uintptr_t);
 
  public:
@@ -28,9 +28,9 @@ class node {
 
  private:
   const uintptr_t _id;
-  std::vector<port*> _inputs;
-  std::vector<port*> _outputs;
-  rtm::evaluator* _evaluator;
+  std::vector<Port*> _inputs;
+  std::vector<Port*> _outputs;
+  rtm::Evaluator* _evaluator;
 
   size_t _max_inputs;
   size_t _max_outputs;

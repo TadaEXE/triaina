@@ -10,16 +10,17 @@
 #include "runtime/model/graph.hpp"
 
 int main(int argc, char* argv[]) {
-  rtm::pseudo_graph g;
-  rtm::node n;
-  n.id() = 1;
+  rtm::PseudoGraph g;
+  rtm::Node n{1, 2, 2};
 
   g.add(&n);
   std::println("{}", g.node_count());
-  std::println("{}", g.find<rtm::node>(1) == &n);
-  std::println("{}", g.find<rtm::node>(11) == &n);
+  std::println("{}", g.find<rtm::Node>(1) == &n);
+  std::println("{}", g.find<rtm::Node>(11) == &n);
   g.remove(&n);
   std::println("{}", g.node_count());
+  std::println("{}", g.find<rtm::Node>(1) == &n);
+  
   // std::vector<ds::GateArm> arms = {{{"++"}, ds::Trit::Minus},
   //                                  {{"__"}, ds::Trit::Plus},
   //                                  {{"-_"}, ds::Trit::Zero}};

@@ -8,7 +8,7 @@
 #include "runtime/model/node.hpp"
 #include "runtime/model/port.hpp"
 namespace rtm {
-class pseudo_graph {
+class PseudoGraph {
  public:
   template <typename T>
   void add(T* ptr) {
@@ -42,19 +42,19 @@ class pseudo_graph {
  private:
   template <typename T>
   constexpr auto& inner() {
-    if constexpr (std::is_same_v<T, node>)
+    if constexpr (std::is_same_v<T, Node>)
       return _nodes;
-    else if constexpr (std::is_same_v<T, edge>)
+    else if constexpr (std::is_same_v<T, Edge>)
       return _edges;
-    else if constexpr (std::is_same_v<T, port>)
+    else if constexpr (std::is_same_v<T, Port>)
       return _ports;
     else
       static_assert(false, "unsupported type");
   }
 
  private:
-  std::list<node*> _nodes;
-  std::list<edge*> _edges;
-  std::list<port*> _ports;
+  std::list<Node*> _nodes;
+  std::list<Edge*> _edges;
+  std::list<Port*> _ports;
 };
 } // namespace rtm
