@@ -1,9 +1,0 @@
-version: v2
-
-modules:
-  - path: proto/graph/
-    name: buf.build/triaina/graph/
-
-    lint:
-      use:
-        - STANDARD
